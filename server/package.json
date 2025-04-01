@@ -1,0 +1,48 @@
+{
+  "name": "dev-links-server",
+  "version": "1.0.0",
+  "description": "Share your links with your friends",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/app.js",
+    "dev": "nodemon --exec tsx src/app.ts",
+    "build": "tsc --outDir dist"
+  },
+  "keywords": [],
+  "author": "JNS",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.10.1",
+    "morgan": "^1.10.0",
+    "tsx": "^4.19.3",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
+    "@types/bcrypt": "^5.0.2",
+    "@types/connect-mongo": "^3.1.6",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-ejs-layouts": "^2.5.4",
+    "@types/express-session": "^1.18.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.5",
+    "@types/validator": "^13.12.2",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3"
+  }
+}

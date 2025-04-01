@@ -1,0 +1,16 @@
+
+{
+    "extends": "@tsconfig/node18/tsconfig.json",
+    "compilerOptions": {
+      "outDir": "dist",
+      "noEmitOnError": false,
+      "checkJs": false,
+      "rootDir": "src",
+      "strict": true,
+      "sourceMap": true,
+      "esModuleInterop": true,  
+      "allowSyntheticDefaultImports": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  }
