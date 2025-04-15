@@ -10,6 +10,7 @@ import MongoStore from 'connect-mongo';
 import { Request, Response } from 'express';
 import userRoutes from './routes/userRoute.js';
 import linkRoutes from './routes/linkRoute.js';
+import profileRoutes from './routes/profileRoutes';
 
 dotenv.config();
 
@@ -42,10 +43,18 @@ app.get('/', (req, res) => {
 
 app.use('/v1/api', userRoutes);
 app.use('/v1/api', linkRoutes);
-app.use((err: any, req: Request, res: Response, next: Function) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+app.use('/v1/api', profileRoutes);
+
+app.use((req, res, next) => {
+  console.log(`Incoming ${req.method} request to ${req.path}`);
+  console.log('Headers:', req.headers);
+  next();
 });
+
+// app.use((err: any, req: Request, res: Response, next: Function) => {
+//   console.error(err.stack);
+//   res.status(500).send('Something broke!');
+// });
 app.listen(PORT, () => {
   console.log(`Server running port ${PORT}`);
 });

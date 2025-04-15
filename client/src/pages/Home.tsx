@@ -21,7 +21,7 @@ const Home = () => {
       });
   };
   return (
-    <div className="mt-[8rem] relative px-4 py-6 flex flex-col gap-7  rounded-[1rem] bg-white w-[21.4375rem]">
+    <div className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white w-[21.4375rem]">
       <Hero />
 
       {links.map((link) => {
