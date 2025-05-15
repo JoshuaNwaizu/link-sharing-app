@@ -14,6 +14,6 @@ router.use(protectedRoute);
 router.post('/profiles', upload.single('image'), createProfile);
 router.route('/profile/:id').get(getProfileById);
 router.get('/me', getMyProfile);
-router.patch('/me', upload.single('image'), updateProfile);
+router.put('/me', upload.single('image'), updateProfile);
 
 export default router;

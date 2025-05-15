@@ -58,6 +58,27 @@ const profileSlice = createSlice({
     },
     resetProfile: () => initialState,
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.firstName = action.payload.firstName;
+          state.lastName = action.payload.lastName;
+          state.email = action.payload.email;
+          state.imageUrl = action.payload.image?.url || null;
+        }
+      })
+      .addCase(fetchProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) || 'Failed to fetch profile';
+      });
+    // ...existing updateProfile cases...
+  },
 });
 
 export const {
@@ -102,71 +123,46 @@ export const fetchProfileById =
       dispatch(setLoading(false));
     }
   };
+export const fetchProfile = createAsyncThunk(
+  'profile/fetchProfile',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
 
-export const fetchProfile = (): AppThunk => async (dispatch) => {
-  dispatch(setLoading(true));
-  dispatch(setError(null));
+      const response = await fetch(`${API}/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No authentication token found');
+      if (response.status === 404) {
+        dispatch(clearProfile());
+        return null;
+      }
+
+      if (!response.ok) throw new Error('Failed to fetch profile');
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to fetch profile',
+      );
     }
-    const response = await fetch(`${API}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (response.status === 404) {
-      dispatch(clearProfile());
-      return;
-    }
-
-    if (!response.ok) throw new Error('Failed to fetch profile');
-
-    const data = await response.json();
-
-    dispatch(
-      setProfileData({
-        id: data._id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        imageUrl: data.image?.url || null,
-      }),
-    );
-    console.log('Fetched profile data:', data);
-    console.log('Fetching from URL:', `${API}/me`);
-    console.log('Using token:', token);
-
-    // Add this to the response handling:
-    console.log('Response status:', response.status);
-    console.log('Response headers:', [...response.headers.entries()]);
-    dispatch(
-      setProfileData({
-        id: data._id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        imageUrl: data.image?.url || null,
-      }),
-    );
-  } catch (error) {
-    handleError(error, dispatch);
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
-// thunk for updating profile
+  },
+);
 
 export const updateProfile = createAsyncThunk(
   'profile/updateProfile',
-  async (formData: FormData, { rejectWithValue }) => {
+  async (formData: FormData, { dispatch, rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found');
 
-      const response = await fetch(`${API}/profiles/update`, {
-        method: 'PATCH',
+      const response = await fetch(`${API}/me`, {
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -179,8 +175,24 @@ export const updateProfile = createAsyncThunk(
       }
 
       const data = await response.json();
-      return data.data; // Note the .data here to match the backend response
+
+      dispatch(
+        setProfileData({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          imageUrl: data.image?.url || null,
+        }),
+      );
+
+      dispatch(setSuccess(true));
+      return data;
     } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to update profile',
+        ),
+      );
       return rejectWithValue(
         error instanceof Error ? error.message : 'Failed to update profile',
       );
@@ -233,9 +245,3 @@ const handleError = (error: unknown, dispatch: (action: any) => void) => {
   console.error(error);
 };
 export default profileSlice.reducer;
-
-// export const logout = (): AppThunk => (dispatch) => {
-//   localStorage.removeItem('token');
-//   dispatch(clearProfile()); // Add this line
-//   // ...other logout logic...
-// };

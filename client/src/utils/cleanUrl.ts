@@ -1,3 +1,13 @@
+export interface Profile {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  image?: {
+    url: string;
+  };
+}
+
 const cleanUrl = (url: string): string => {
   // Remove http://localhost:5173/ if present
   let cleanedUrl = url.replace('http://localhost:5173/', '');

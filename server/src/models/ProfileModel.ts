@@ -1,8 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import validator, { trim } from 'validator';
 const Schema: typeof mongoose.Schema = mongoose.Schema;
+interface ImageData {
+  url: string;
+  public_id: string;
+}
 
-const profileSchema = new Schema(
+interface IProfile {
+  user: Types.ObjectId;
+  firstName: string;
+  lastName: string;
+  email: string;
+  image?: ImageData;
+}
+const profileSchema = new Schema<IProfile>(
   {
     //   user: { type: Sche  ma.Types.ObjectId, ref: 'User', required: true },
     user: {

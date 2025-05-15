@@ -25,6 +25,8 @@ const platformNames: string[] = [
   'twitch',
   'youtube',
   'linkedin',
+  'dev.to',
+  'codewars',
 ];
 const LinkCard = ({
   id,

@@ -6,6 +6,22 @@ import { fetchLinks } from '../../utils/linkSlice';
 import { API } from '../../App';
 import { fetchProfileById } from '../../utils/profileSlice';
 
+export const platformColors = {
+  facebook: '#2442AC',
+  freecodecamp: '#302267',
+  'frontend-mentor': '#302267',
+  github: '#1A1A1A',
+  gitlab: '#EB4925',
+  hashnode: '#0330D1',
+  linkedin: '#2D68FF',
+  'stack-overflow': '#EC7100',
+  twitter: '#43B7E9',
+  twitch: '#EE3FC8',
+  youtube: '#EE3939',
+  'dev.to': '#333',
+  codewars: '#43B7E9',
+} as const;
+
 const PhoneLink = () => {
   const { firstName, lastName, email, imageUrl } = useSelector(
     (state: RootState) => state.profile,
@@ -13,7 +29,7 @@ const PhoneLink = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [dataError, setDataError] = useState<boolean>(false);
 
-  const { links } = useSelector((state: RootState) => state.link);
+  const { links, status } = useSelector((state: RootState) => state.link);
   const emptyRects = Array.from({ length: 5 }, (_, i) => ({
     id: `empty-${i}`,
     y: 278 + i * 64,
@@ -85,8 +101,7 @@ const PhoneLink = () => {
       >
         {/* Phone frame paths */}
         {status === 'loading'
-          ? // Show loading state
-            emptyRects.map((rect) => (
+          ? emptyRects.map((rect) => (
               <rect
                 key={rect.id}
                 width="237"
@@ -98,52 +113,56 @@ const PhoneLink = () => {
               />
             ))
           : links.length > 0
-            ? // Show actual links
-              links.map((link, index) => (
-                <g
-                  key={link.id || index}
-                  transform={`translate(35, ${278 + index * 64})`}
-                >
-                  <a
-                    href={cleanUrl(link.url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+            ? links.map((link, index) => {
+                // Get the color for this platform, default to #1A1A1A if not found
+                const platformKey =
+                  link.platform.toLowerCase() as keyof typeof platformColors;
+                const color = platformColors[platformKey] || '#1A1A1A';
+                console.log(color);
+                return (
+                  <g
+                    key={link.id || index}
+                    transform={`translate(35, ${278 + index * 64})`}
                   >
-                    <rect
-                      width="237"
-                      height="44"
-                      fill="#1A1A1A"
-                      rx="8"
-                    />
-
-                    <image
-                      href={`/images/icon-${link.platform.toLowerCase()}.svg`}
-                      x="16"
-                      y="12"
-                      width="18"
-                      height="18"
-                    />
-                    <text
-                      x="48"
-                      y="28"
-                      fill="#fff"
-                      fontSize="14"
-                      className="capitalize"
+                    <a
+                      href={cleanUrl(link.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {link.platform}
-                    </text>
-                    <image
-                      href="/images/icon-arrow-right.svg"
-                      x="205"
-                      y="12"
-                      width="20"
-                      height="20"
-                    />
-                  </a>
-                </g>
-              ))
-            : // Show empty state
-              emptyRects.map((rect) => (
+                      <rect
+                        width="237"
+                        height="44"
+                        fill={color}
+                        rx="8"
+                      />
+                      <image
+                        href={`/images/icon-${link.platform.toLowerCase()}.svg`}
+                        x="16"
+                        y="12"
+                        width="18"
+                        height="18"
+                      />
+                      <text
+                        x="48"
+                        y="28"
+                        fill="#fff"
+                        fontSize="14"
+                        className="capitalize"
+                      >
+                        {link.platform}
+                      </text>
+                      <image
+                        href="/images/icon-arrow-right.svg"
+                        x="205"
+                        y="12"
+                        width="20"
+                        height="20"
+                      />
+                    </a>
+                  </g>
+                );
+              })
+            : emptyRects.map((rect) => (
                 <rect
                   key={rect.id}
                   width="237"

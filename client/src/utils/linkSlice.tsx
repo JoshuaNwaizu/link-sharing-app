@@ -93,10 +93,15 @@ const linkSlice = createSlice({
       state.toggleOption =
         state.toggleOption === action.payload ? null : action.payload;
     },
+
     addLink: (state) => {
-      const newId = (state.links.length + 1).toString();
+      const nextId =
+        state.links.length > 0
+          ? Math.max(...state.links.map((link) => Number(link.id))) + 1
+          : 1;
+
       state.links.push({
-        id: newId,
+        id: nextId.toString(),
         url: '',
         platform: 'github',
         isDropDown: false,
@@ -117,17 +122,34 @@ const linkSlice = createSlice({
       state.links = state.links.filter((link) => link.id !== action.payload);
     },
   },
+
   extraReducers: (builder) => {
-    builder.addCase(saveLinks.pending, (state) => {
-      state.status = 'loading';
-    });
-    builder.addCase(saveLinks.fulfilled, (state) => {
-      state.status = 'idle';
-    });
-    builder.addCase(saveLinks.rejected, (state, action) => {
-      state.status = 'failed';
-      state.error = action.error.message ?? null;
-    });
+    builder
+      .addCase(fetchLinks.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchLinks.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.links = action.payload.map((link: Link, index: number) => ({
+          ...link,
+          id: index + 1, // Sequential IDs starting from 1
+        }));
+        state.error = null;
+      })
+      .addCase(fetchLinks.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message ?? null;
+      })
+      .addCase(saveLinks.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(saveLinks.fulfilled, (state) => {
+        state.status = 'idle';
+      })
+      .addCase(saveLinks.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message ?? null;
+      });
   },
 });
 export { linkSlice };

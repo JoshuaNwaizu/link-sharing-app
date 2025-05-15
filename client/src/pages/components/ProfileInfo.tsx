@@ -1,52 +1,10 @@
-// import { useSelector } from 'react-redux';
-// import { RootState, useAppDispatch } from '../../store';
-// import { fetchProfile } from '../../utils/profileSlice';
-// import { useEffect } from 'react';
-
-// const ProfileInfo = () => {
-//   const dispatch = useAppDispatch();
-//   const { firstName, lastName, email, imageUrl, loading, error } = useSelector(
-//     (state: RootState) => state.profile,
-//   );
-
-//   useEffect(() => {
-//     dispatch(fetchProfile());
-//   }, [dispatch]);
-
-//   if (loading) {
-//     return <div>Loading profile...</div>;
-//   }
-
-//   if (error) {
-//     return <div className="text-red-500">Error: {error}</div>;
-//   }
-//   return (
-//     <div>
-//       <div>
-//         {imageUrl && (
-//           <img
-//             src={imageUrl}
-//             alt="profile image"
-//           />
-//         )}
-
-//         <h1>
-//           <span>{firstName}</span>
-//           <span>{lastName}</span>
-//         </h1>
-//         <p>{email}</p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProfileInfo;
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store';
 import { fetchProfileById } from '../../utils/profileSlice';
 import { fetchLinks } from '../../utils/linkSlice';
 import { useEffect, useState } from 'react';
 import { API } from '../../App';
+import { platformColors } from './PhoneLink';
 
 const ProfileInfo = () => {
   const dispatch = useAppDispatch();
@@ -145,6 +103,12 @@ const ProfileInfo = () => {
               <div
                 key={link.url}
                 className="flex items-center justify-between bg-[#1A1A1A] text-white p-4 rounded-lg"
+                style={{
+                  backgroundColor:
+                    platformColors[
+                      link.platform.toLowerCase() as keyof typeof platformColors
+                    ] || '#1A1A1A',
+                }}
               >
                 <span className="flex gap-2">
                   <img
