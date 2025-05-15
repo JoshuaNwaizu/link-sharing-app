@@ -1,7 +1,8 @@
-const Header = () => {
+const TabletHeader = () => {
   return (
-    <header className="flex items-center  justify-center h-[4rem] fixed md:hidden right-0 left-0 top-0  z-10">
-      <nav className="flex w-[19.4375rem] items-center gap-2.5 mt-2 ">
+    <div className="max-sm:hidden">
+      {' '}
+      <nav className="flex w-[19.4375rem] justify-center items-center gap-2.5 mt-2 ">
         <img
           src="/images/logo-devlinks-small.svg"
           alt="logo"
@@ -48,8 +49,8 @@ const Header = () => {
           />
         </svg>
       </nav>
-    </header>
+    </div>
   );
 };
 
-export default Header;
+export default TabletHeader;

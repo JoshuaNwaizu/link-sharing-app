@@ -1,8 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import dataReducer from './utils/dataSlice';
 import linkReducer from './utils/linkSlice';
-// import ProfileReducer from './utils/profileSlice';
+import ProfileReducer from './utils/profileSlice';
+import { useDispatch } from 'react-redux';
 
+export const useAppDispatch = () => useDispatch<AppDispatch>();
 const loadState = () => {
   try {
     const serializedState = localStorage.getItem('linkState');
@@ -10,6 +12,7 @@ const loadState = () => {
     const parsed = JSON.parse(serializedState);
     return {
       link: parsed.link,
+      profile: parsed.profile,
     };
   } catch (err) {
     return undefined;
@@ -21,7 +24,7 @@ export const store = configureStore({
   reducer: {
     data: dataReducer,
     link: linkReducer,
-    // profile: ProfileReducer,
+    profile: ProfileReducer,
   },
   preloadedState: persistedState,
 });
@@ -30,10 +33,22 @@ store.subscribe(() => {
   const state = store.getState();
   const toPersist = {
     link: state.link,
-    // profile: state.profile, // Persist profile data too
+    profile: {
+      firstName: state.profile.firstName,
+      lastName: state.profile.lastName,
+      email: state.profile.email,
+      imageUrl: state.profile.imageUrl,
+    },
   };
   localStorage.setItem('reduxState', JSON.stringify(toPersist));
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+// export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;

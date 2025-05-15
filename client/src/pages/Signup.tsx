@@ -42,7 +42,7 @@ const Signup = () => {
     }
   };
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 md:bg-white md:w-[29.75rem]  md:p-[2.5rem]  md:transform md:scale-90 md:origin-center md:rounded-[0.75rem]">
       <div className="flex flex-col gap-2">
         <h1 className="text-[#333] text-[1.5rem] font-bold leading-[2.25rem]">
           Create account
@@ -90,6 +90,7 @@ const Signup = () => {
         <Button
           name="Create account"
           type="submit"
+          className="text-white"
         />
       </form>
       <div className="flex flex-col gap-2 items-center">

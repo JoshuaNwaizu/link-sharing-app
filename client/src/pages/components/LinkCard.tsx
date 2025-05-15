@@ -78,7 +78,7 @@ const LinkCard = ({
           <h1 className="text-[1rem] font-bold  tex-[#737373]">Link #{id}</h1>
         </span>
         <p
-          className="text-[#737373]"
+          className="text-[#737373] cursor-pointer"
           onClick={handleRemoveLink}
         >
           Remove

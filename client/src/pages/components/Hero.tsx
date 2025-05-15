@@ -10,7 +10,7 @@ const Hero = () => {
   return (
     <div className="flex flex-col gap-8 ">
       <span className="flex flex-col gap-3">
-        <h2 className="text-[1.5rem] font-bold leading-[2.25rem]">
+        <h2 className="text-[1.5rem] md:text-[2rem] font-bold leading-[2.25rem]">
           Customize your links
         </h2>
         <p className="text-[#737373]">
@@ -19,7 +19,7 @@ const Hero = () => {
         </p>
       </span>
       <button
-        className=" border border-[#633CFF] text-[#633CFF] rounded-[0.5rem] font-semibold leading-[1.5rem]  py-[0.6875rem] px-[1.6875rem]"
+        className="cursor-pointer border border-[#633CFF] text-[#633CFF] rounded-[0.5rem] font-semibold leading-[1.5rem]  py-[0.6875rem] px-[1.6875rem]"
         onClick={handleAddLink}
       >
         + Add new link

@@ -21,7 +21,40 @@ const initialState: LinkState = {
   error: null,
   status: 'idle',
 };
+export const fetchLinks = createAsyncThunk(
+  'link/fetchLinks',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
 
+      const response = await fetch(`${API}/get-links`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch links');
+      }
+
+      const data = await response.json();
+      const transformedLinks = data.data.links.map((link: any) => ({
+        id: link._id || String(Math.random()), // Ensure each link has an id
+        url: link.url,
+        platform: link.platform,
+        isDropDown: false,
+      }));
+      return transformedLinks;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to fetch links',
+      );
+    }
+  },
+);
 export const saveLinks = createAsyncThunk(
   'link/saveLinks',
   async (_, { getState }) => {

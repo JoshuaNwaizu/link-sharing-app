@@ -133,32 +133,76 @@ export const logout = () => {
 };
 const protectedRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    // Get the token from the cookies
+    // 1. Get token from both cookie and header
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      res.status(401).json({
+        status: 'fail',
+        message: 'You are not logged in! Please log in to get access.',
+      });
+      return;
+    }
     try {
-      const token = req.headers.authorization?.split(' ')[1];
-      if (!token) {
-        res
-          .status(403)
-          .json({ message: 'You are not logged in', success: false });
-        return;
-      }
-      // Verify the token
+      // 2. Verify token
       const decoded = jwt.verify(token, jwtSecret) as { id: string };
+
+      // 3. Check user exists
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
-        res.status(403).json({
-          message: ' The user belonging to this token no longer exist',
-          success: false,
+        res.status(401).json({
+          status: 'fail',
+          message: 'User no longer exists',
         });
         return;
       }
-      req.user = currentUser;
 
+      // 4. Add user to request
+      req.user = currentUser;
       next();
-    } catch (error: unknown) {
-      res.status(403).json({ message: 'Invalid token. Please Login' });
+    } catch (error) {
+      console.error('JWT Error:', error);
+      res.status(401).json({
+        status: 'fail',
+        message: 'Invalid or expired token',
+      });
+      return;
     }
   },
 );
+// const protectedRoute = catchAsync(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     console.log('Auth Headers:', req.headers.authorization);
+//     // Get the token from the cookies
+//     try {
+//       const token = req.headers.authorization?.split(' ')[1];
+//       if (!token) {
+//         console.log('you are not logged in');
+//         res
+//           .status(403)
+//           .json({ message: 'You are not logged in', success: false });
+//         return;
+//       }
+
+//       // Verify the token
+//       const decoded = jwt.verify(token, jwtSecret) as { id: string };
+//       console.log('Decoded token:', decoded);
+//       const currentUser = await User.findById(decoded.id);
+//       if (!currentUser) {
+//         res.status(403).json({
+//           message: ' The user belonging to this token no longer exist',
+//           success: false,
+//         });
+//         return;
+//       }
+//       req.user = currentUser;
+//       console.log('Authenticated User ID:', (req as any).user._id);
+
+//       next();
+//     } catch (error: unknown) {
+//       res.status(403).json({ message: 'Invalid token. Please Login' });
+//     }
+//   },
+// );
 
 export { createAccount, login, protectedRoute };

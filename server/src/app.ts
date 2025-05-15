@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import connectDB from './config/db';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import { Request, Response } from 'express';
 import userRoutes from './routes/userRoute.js';
 import linkRoutes from './routes/linkRoute.js';
 import profileRoutes from './routes/profileRoutes';
@@ -26,7 +25,6 @@ app.use(morgan('dev'));
 app.use(cors(corsOptions));
 app.use(expressLayout);
 app.use(express.json());
-app.use(cookieParser());
 
 app.use(
   session({
@@ -41,6 +39,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
+app.use(cookieParser());
 app.use('/v1/api', userRoutes);
 app.use('/v1/api', linkRoutes);
 app.use('/v1/api', profileRoutes);
@@ -50,11 +49,6 @@ app.use((req, res, next) => {
   console.log('Headers:', req.headers);
   next();
 });
-
-// app.use((err: any, req: Request, res: Response, next: Function) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something broke!');
-// });
 app.listen(PORT, () => {
   console.log(`Server running port ${PORT}`);
 });

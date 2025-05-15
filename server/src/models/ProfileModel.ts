@@ -5,6 +5,12 @@ const Schema: typeof mongoose.Schema = mongoose.Schema;
 const profileSchema = new Schema(
   {
     //   user: { type: Sche  ma.Types.ObjectId, ref: 'User', required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      unique: true, // ✅ Ensures only one profile per user
+    },
     image: {
       url: {
         type: String,
@@ -37,8 +43,6 @@ const profileSchema = new Schema(
     toObject: { virtuals: true },
   },
 );
-// Add index for better query performance
-profileSchema.index({ user: 1 });
 
 // Add a virtual property for fullName
 profileSchema.virtual('fullName').get(function () {

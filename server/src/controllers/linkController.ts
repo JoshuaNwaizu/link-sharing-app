@@ -54,13 +54,33 @@ const saveLinks = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getLinks = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  if (!userId) {
-    res.status(401).json({ message: 'Not authenticated' });
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json({ message: 'Not authenticated' });
+      return;
+    }
+    const userLinks = await Link.find({ user: userId })
+      .select('platform url order -_id') // Only select needed fields, exclude _id
+      .sort('order')
+      .lean();
+
+    if (!userLinks || userLinks.length === 0) {
+      res.status(200).json({
+        status: 'success',
+        data: { links: [] },
+      });
+      return;
+    }
+    res.status(200).json({ data: { links: userLinks } });
+  } catch (error) {
+    console.error('Error fetching links:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch links',
+    });
     return;
   }
-  const links = await Link.find({ user: userId }).sort('order');
-  res.status(200).json({ data: { links } });
 });
 
 export { saveLinks, getLinks };
