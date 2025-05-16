@@ -20,7 +20,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     return `data:image/*;base64,${btoa(binary)}`;
   };
   return (
-    <div className="flex flex-col xl:items-center xl:justify-center xl:gap-[4rem] xl:flex-row gap-3 p-[1.2rem] xl:rounded-[0.75rem] bg-[#FAFAFA]">
+    <div className="flex flex-col xl:h-[14.5625rem] p-4 xl:items-center xl:justify-center xl:gap-[4rem] xl:flex-row gap-3  xl:rounded-[0.75rem] bg-[#FAFAFA]">
       <h1>Profile picture</h1>
       <input
         type="file"
@@ -34,18 +34,28 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
 
       <label
         htmlFor="file-upload"
-        className={`bg-[#EFEBFF] ${
-          preview ? 'pt-[1rem] pb-[1rem]' : 'pt-[3.8125rem] pb-[3.75rem]'
-        } w-[13rem] rounded-[0.75rem] pr-[2.375rem] pl-[2.4375rem] flex flex-col justify-center gap-2 items-center cursor-pointer`}
+        // className={`bg-[#EFEBFF] ${
+        //   preview ? '' : 'pt-[3.8125rem] pb-[3.75rem]'
+        // } w-[13rem] rounded-[0.75rem] pr-[2.375rem] pl-[2.4375rem] flex flex-col justify-center gap-2 items-center cursor-pointer`}
       >
         {preview ? (
-          <img
-            src={getPreviewUrl(preview)}
-            alt="Preview"
-            className="w-[6rem] h-[6rem] object-cover rounded-full"
-          />
+          <div className="relative  w-[12rem] h-[12rem] group">
+            <img
+              src={getPreviewUrl(preview)}
+              alt="Preview"
+              className="w-[12rem] h-[12rem] md:w-[12.0625rem] md:h-[12.0625rem] object-cover rounded-[.75rem]"
+            />
+            <div className="absolute inset-0 bg-black/50  opacity-100  flex items-center flex-col justify-center  rounded-[.75rem]">
+              <img
+                src="/images/icon-upload-image.svg"
+                alt="upload"
+                className="w-[2.5rem] "
+              />
+              <span className="text-white font-semibold">Change Image</span>
+            </div>
+          </div>
         ) : (
-          <>
+          <div className="bg-[#EFEBFF] pt-[3.8125rem] pb-[3.75rem] w-[13rem] rounded-[0.75rem] pr-[2.375rem] pl-[2.4375rem] flex flex-col justify-center gap-2 items-center">
             <img
               src="/images/icon-upload-image.svg"
               alt=""
@@ -54,7 +64,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
             <span className="text-[#633CFF] font-semibold">
               + Upload a file
             </span>
-          </>
+          </div>
         )}
       </label>
       <span className="text-[#737373] text-[0.75rem] xl:w-[13rem] leading-[1.13rem]">

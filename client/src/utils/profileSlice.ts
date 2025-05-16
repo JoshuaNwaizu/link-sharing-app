@@ -76,6 +76,20 @@ const profileSlice = createSlice({
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) || 'Failed to fetch profile';
+      })
+      .addCase(saveOrUpdateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(saveOrUpdateProfile.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(saveOrUpdateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.success = false;
       });
     // ...existing updateProfile cases...
   },
@@ -195,6 +209,69 @@ export const updateProfile = createAsyncThunk(
       );
       return rejectWithValue(
         error instanceof Error ? error.message : 'Failed to update profile',
+      );
+    }
+  },
+);
+export const saveOrUpdateProfile = createAsyncThunk(
+  'profile/saveOrUpdateProfile',
+  async (formData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No authentication token found');
+
+      // First check if profile exists
+      const checkResponse = await fetch(`${API}/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let response;
+      if (checkResponse.status === 404) {
+        // No profile exists, create new one
+        response = await fetch(`${API}/profiles`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+      } else {
+        // Profile exists, update it
+        response = await fetch(`${API}/me`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+      }
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to save/update profile');
+      }
+
+      const data = await response.json();
+
+      dispatch(
+        setProfileData({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          imageUrl: data.image?.url || null,
+        }),
+      );
+
+      dispatch(setSuccess(true));
+      return data;
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'Failed to save/update profile',
+        ),
+      );
+      return rejectWithValue(
+        error instanceof Error
+          ? error.message
+          : 'Failed to save/update profile',
       );
     }
   },

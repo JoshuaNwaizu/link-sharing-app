@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../store';
 import {
   fetchProfile,
+  saveOrUpdateProfile,
   setProfileData,
-  updateProfile,
 } from '../utils/profileSlice';
 import { Profile } from '../utils/cleanUrl';
 
@@ -25,7 +25,6 @@ const ProfileDetails = () => {
       .unwrap()
       .then((profile: Profile | null) => {
         if (profile) {
-          // Set initial form data
           dispatch(
             setProfileData({
               firstName: profile.firstName,
@@ -76,8 +75,9 @@ const ProfileDetails = () => {
     }
 
     try {
-      await dispatch(updateProfile(formDataToSend)).unwrap();
-      // Fetch updated profile data after successful update
+      // await dispatch(updateProfile(formDataToSend)).unwrap();
+      await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
+      // Fetch updated profile data after successful updat
       await dispatch(fetchProfile());
     } catch (error) {
       console.error('Error saving profile:', error);

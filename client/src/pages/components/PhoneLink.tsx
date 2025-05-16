@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import cleanUrl from '../../utils/cleanUrl';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { fetchLinks } from '../../utils/linkSlice';
 import { API } from '../../App';
 import { fetchProfileById } from '../../utils/profileSlice';
@@ -27,7 +27,6 @@ const PhoneLink = () => {
     (state: RootState) => state.profile,
   );
   const dispatch = useDispatch<AppDispatch>();
-  const [dataError, setDataError] = useState<boolean>(false);
 
   const { links, status } = useSelector((state: RootState) => state.link);
   const emptyRects = Array.from({ length: 5 }, (_, i) => ({
@@ -62,7 +61,7 @@ const PhoneLink = () => {
         const data = await res.json();
 
         if (!data) {
-          setDataError(true);
+          // setDataError(true);
           return;
         }
 
@@ -71,7 +70,7 @@ const PhoneLink = () => {
         await dispatch(fetchLinks());
       } catch (err) {
         console.error('Error fetching data:', err);
-        setDataError(true);
+        // setDataError(true);
       }
     };
 
@@ -82,13 +81,6 @@ const PhoneLink = () => {
     dispatch(fetchLinks());
   }, [dispatch]);
 
-  if (dataError) {
-    return (
-      <div className="max-xl:hidden t h-[52.125rem] rounded-[1rem] bg-white p-[1.5rem] w-[30rem] items-center flex justify-center">
-        <p className="text-red-500">Error fetching data</p>
-      </div>
-    );
-  }
   return (
     <div className="max-xl:hidden t h-[52.125rem] rounded-[1rem] bg-white p-[1.5rem] w-[30rem] items-center flex justify-center">
       <svg
