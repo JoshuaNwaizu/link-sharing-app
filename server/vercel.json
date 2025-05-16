@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "dist/app.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+      }
     }
   ],
   "routes": [
