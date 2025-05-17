@@ -78,7 +78,7 @@ const ProfileInfo = () => {
   if (linkError) return <div>Error: {error}</div>;
 
   return (
-    <div className="flex  flex-col md:rounded-[1.5rem] w-[21.8125rem] md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem]  justify-center ">
+    <div className="flex  flex-col md:rounded-[1.5rem] w-full md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem]  justify-center ">
       <div className=" flex flex-col w-[14.8125rem] gap-9">
         <div className="flex items-center justify-center gap-3.5 flex-col">
           <div>
