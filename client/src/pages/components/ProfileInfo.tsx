@@ -5,6 +5,7 @@ import { fetchLinks } from '../../utils/linkSlice';
 import { useEffect, useState } from 'react';
 import { API } from '../../App';
 import { platformColors } from './PhoneLink';
+import cleanUrl from '../../utils/cleanUrl';
 
 const ProfileInfo = () => {
   const dispatch = useAppDispatch();
@@ -119,7 +120,7 @@ const ProfileInfo = () => {
                 </span>
 
                 <a
-                  href={link.url}
+                  href={cleanUrl(link.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
