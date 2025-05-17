@@ -76,9 +76,10 @@ const Login = () => {
           placeholder="Enter your password"
         />
         <Button
-          name="Login"
+          name={loading ? 'Logging in...' : 'Login'}
           type="submit"
-          className="text-white"
+          className={`text-white ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading}
         />
       </form>
       <div className="flex flex-col gap-2 items-center">
