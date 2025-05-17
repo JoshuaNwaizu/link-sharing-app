@@ -5,7 +5,7 @@ import PhoneLink from '../../pages/components/PhoneLink';
 const HomeLayout = () => {
   return (
     <div className="min-h-screen  flex justify-center  md:bg-[#FAFAFA]">
-      <div className="w-[21.4375rem]  md:w-[40.0625rem] xl:w-full xl:mx-auto">
+      <div className="w-[90%] md:w-[40.0625rem] xl:w-full xl:mx-auto">
         <Nav />
         <main className="  md:p-6 xl:p-8 ">
           <div className="flex flex-col  xl:flex-row xl:mt-[5rem] md:items-center items-center xl:items-start gap-6 xl:gap-5 justify-center xl:justify-center ">

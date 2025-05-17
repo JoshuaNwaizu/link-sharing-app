@@ -56,7 +56,7 @@ const Home = () => {
   }
 
   return (
-    <div className="mt-[8rem]  xl:mt-0  lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem]  w-[21.4375rem]">
+    <div className="mt-[8rem]  xl:mt-0  lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem]  w-full">
       <Hero />
       <div className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar">
         {links.length > 0 ? (
