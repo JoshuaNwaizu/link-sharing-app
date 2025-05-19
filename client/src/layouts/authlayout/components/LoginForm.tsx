@@ -9,6 +9,10 @@ interface LoginFormProps {
   id?: string;
   placeholder?: string;
   htmlFor?: string;
+  error?: boolean;
+  className?: string;
+  errorMessage?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
@@ -19,7 +23,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
   name,
   id,
   placeholder,
+  error,
+  className,
   htmlFor,
+  onChange,
+  errorMessage,
 }) => {
   return (
     <div>
@@ -38,11 +46,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
           <input
             type={type}
             name={name}
+            onChange={onChange}
             id={id}
             placeholder={placeholder}
-            className=" px-3 text-[1rem] outline-none leading-[1.5rem] text-[#333] w-full"
+            className={` px-3 text-[1rem] outline-none leading-[1.5rem] text-[#333] w-full ${className} ${
+              error ? 'border-red-500' : 'border-[#D9D9D9]'
+            }`}
           />
         </div>
+        {error && errorMessage && (
+          <span className="text-red-500 text-xs mt-1">{errorMessage}</span>
+        )}
       </div>
     </div>
   );

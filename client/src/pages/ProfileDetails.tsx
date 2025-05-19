@@ -10,15 +10,19 @@ import {
   setProfileData,
 } from '../utils/profileSlice';
 import { Profile } from '../utils/cleanUrl';
+import { ToastContainer, toast } from 'react-toastify';
 
 const ProfileDetails = () => {
   const dispatch = useAppDispatch();
-  const { firstName, lastName, email, imageUrl, loading, error, success } =
-    useSelector((state: RootState) => state.profile);
+  const { firstName, lastName, email, imageUrl, loading } = useSelector(
+    (state: RootState) => state.profile,
+  );
 
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const isFormValid = () => {
+    return Boolean(firstName?.trim() && lastName?.trim() && email?.trim());
+  };
   // Fetch profile on component mount
   useEffect(() => {
     dispatch(fetchProfile())
@@ -79,8 +83,18 @@ const ProfileDetails = () => {
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
       // Fetch updated profile data after successful updat
       await dispatch(fetchProfile());
+      toast.success('Profile updated successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
     } catch (error) {
       console.error('Error saving profile:', error);
+      toast.error('Failed to update profile. Please try again.', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
     }
   };
 
@@ -94,17 +108,6 @@ const ProfileDetails = () => {
           Add your details to create a personal touch to your profile.
         </p>
       </div>
-
-      {error && (
-        <div className="text-red-500 text-sm p-2 bg-red-50 rounded">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="text-green-500 text-sm p-2 bg-green-50 rounded">
-          Profile updated successfully!
-        </div>
-      )}
 
       <ProfilePicture
         preview={preview || imageUrl}
@@ -123,12 +126,18 @@ const ProfileDetails = () => {
           <Button
             name={loading ? 'Saving...' : 'Save'}
             type="button"
-            className="mt-4 w-full md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem]"
+            className={`mt-4 w-full md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem] ${
+              loading || !isFormValid ? 'opacity-50' : ''
+            }`}
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !isFormValid}
           />
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        theme="light"
+      />
     </section>
   );
 };

@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { API } from '../../App';
 import { platformColors } from './PhoneLink';
 import cleanUrl from '../../utils/cleanUrl';
+import ProfileInfoSkeleton from './ProfileInfoSkeleton';
+import ErrorCard from './ErrorCard';
 
 const ProfileInfo = () => {
   const dispatch = useAppDispatch();
@@ -14,11 +16,15 @@ const ProfileInfo = () => {
     status,
     error: linkError,
   } = useSelector((state: RootState) => state.link);
-  const { firstName, lastName, email, imageUrl, loading, error } = useSelector(
+  const { firstName, lastName, email, imageUrl, error } = useSelector(
     (state: RootState) => state.profile,
   );
+  const data = useSelector((state: RootState) => state.data.data);
   const [dataError, setDataError] = useState<boolean>(false);
-
+  const handleRetry = () => {
+    dispatch(fetchProfileById(data._id));
+    dispatch(fetchLinks());
+  };
   useEffect(() => {
     const getProfile = async () => {
       const token = localStorage.getItem('token'); // or from cookies if you're using cookies
@@ -63,23 +69,30 @@ const ProfileInfo = () => {
     dispatch(fetchLinks());
   }, [dispatch]);
 
-  if (loading) {
-    return <div>Loading profile...</div>;
-  }
-
   if (dataError) {
-    <div className="text-red-500 font-bold text-4xl">There's no item here</div>;
+    <ErrorCard
+      message="No profile information found. Please complete your profile."
+      retry={handleRetry}
+    />;
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    <ErrorCard
+      message={error}
+      retry={handleRetry}
+    />;
   }
 
-  if (status === 'loading') return <div>Loading...</div>;
+  if (status === 'loading')
+    return (
+      <div>
+        <ProfileInfoSkeleton />
+      </div>
+    );
   if (linkError) return <div>Error: {error}</div>;
 
   return (
-    <div className="flex  flex-col md:rounded-[1.5rem] w-full md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem]  justify-center ">
+    <div className="flex  flex-col md:rounded-[1.5rem] mx-auto w-full md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem]  justify-center ">
       <div className=" flex flex-col w-[14.8125rem] gap-9">
         <div className="flex items-center justify-center gap-3.5 flex-col">
           <div>

@@ -6,6 +6,8 @@ import { AppDispatch, RootState } from '../store';
 import { fetchLinks, saveLinks } from '../utils/linkSlice';
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { ToastContainer, toast } from 'react-toastify';
+import LoadingSkeleton from './components/LoadingSkeleton';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -41,18 +43,16 @@ const Home = () => {
       await dispatch(saveLinks()).unwrap();
       // Refetch links after successful save
       await dispatch(fetchLinks()).unwrap();
+      toast.success('Links saved successfully!');
     } catch (error) {
       console.error('Error saving links:', error);
+      toast.error('Error saving link!');
     }
   };
 
   // Show loading state
   if (status === 'loading' && !links.length) {
-    return (
-      <div className="mt-[8rem] flex justify-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (
@@ -93,12 +93,17 @@ const Home = () => {
           <Button
             name={status === 'loading' ? 'Saving...' : 'Save'}
             type="button"
-            className={`mt-4 w-full md:w-auto text-white ${!links.length && 'opacity-[0.25]'} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
+            className={`mt-4 w-full md:w-auto text-white ${!links.length || (status === 'loading' && 'opacity-[0.25]')} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
             onClick={handleSave}
             disabled={status === 'loading' || !links.length}
           />
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+      />
     </div>
   );
 };

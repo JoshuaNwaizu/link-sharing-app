@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import { useState } from 'react';
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,9 +14,43 @@ const Login = () => {
   const { data, loading, error } = useSelector(
     (state: RootState) => state.data,
   );
+  const [formValues, setFormValues] = useState({
+    email: '',
+    password: '',
+  });
+  const [validationErrors, setValidationErrors] = useState({
+    email: false,
+    password: false,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Reset error for the specific field
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: false,
+    }));
+  };
+  const isFormValid = () => {
+    return formValues.email.trim() !== '' && formValues.password.trim() !== '';
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isFormValid()) {
+      setValidationErrors({
+        email: formValues.email.trim() === '',
+        password: formValues.password.trim() === '',
+      });
+      toast.error('Please fill in all fields');
+      return;
+    }
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -32,11 +68,13 @@ const Login = () => {
       ).unwrap();
       if (response.token) {
         localStorage.setItem('token', response.token);
+        toast.success('Login successful!');
         console.log('Token stored in localStorage');
       }
       navigate('/');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating account:', err);
+      toast.error('Email or password is incorrect');
     }
   };
   console.log(data, loading, error);
@@ -64,7 +102,10 @@ const Login = () => {
           name="email"
           id="email"
           placeholder="e.g. alex@email.com"
+          onChange={handleInputChange}
+          errorMessage={validationErrors.email ? 'Email is required' : ''}
         />
+
         <LoginForm
           htmlFor="password"
           title="Password"
@@ -74,12 +115,14 @@ const Login = () => {
           name="password"
           id="password"
           placeholder="Enter your password"
+          onChange={handleInputChange}
+          errorMessage={validationErrors.password ? 'Password is required' : ''}
         />
         <Button
           name={loading ? 'Logging in...' : 'Login'}
           type="submit"
-          className={`text-white ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={loading}
+          className={`text-white ${loading || !isFormValid() ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading || !isFormValid()}
         />
       </form>
       <div className="flex flex-col gap-2 items-center">
@@ -91,6 +134,12 @@ const Login = () => {
           <p className="cursor-pointer text-[#633CFF]">Create account</p>
         </Link>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        theme="light"
+      />
     </div>
   );
 };

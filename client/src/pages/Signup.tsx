@@ -5,22 +5,75 @@ import { AppDispatch, RootState } from '../store';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [validationErrors, setValidationErrors] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   const navigate = useNavigate();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.data,
   );
   console.log(data, loading, error);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  // Add input change handler
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (name === 'password' || name === 'confirmPassword') {
+      setValidationErrors((prev) => ({
+        ...prev,
+        password: value.length > 0 && value.length < 8,
+      }));
+    }
+  };
+
+  // Add function to check if form is valid
+  const isFormValid = () => {
+    return (
+      formData.email.trim() !== '' &&
+      formData.password.trim() !== '' &&
+      formData.confirmPassword.trim() !== ''
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isFormValid()) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
+    setValidationErrors({ password: false, confirmPassword: false });
 
+    if (password.length < 8) {
+      setValidationErrors((prev) => ({ ...prev, password: true }));
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setValidationErrors((prev) => ({ ...prev, confirmPassword: true }));
+      toast.error('Passwords do not match');
+      return;
+    }
     try {
       const response = await dispatch(
         fetchData({
@@ -35,6 +88,7 @@ const Signup = () => {
       navigate('/auth/login');
       if (response.token) {
         localStorage.setItem('token', response.token);
+        toast.success('Account created successfully!');
         console.log('Token stored in localStorage', response.token);
       }
     } catch (err) {
@@ -64,6 +118,8 @@ const Signup = () => {
           type="email"
           name="email"
           id="email"
+          error={validationErrors.password}
+          onChange={handleInputChange}
           placeholder="e.g. alex@email.com"
         />
         <LoginForm
@@ -74,7 +130,13 @@ const Signup = () => {
           type="password"
           name="password"
           id="password"
+          onChange={handleInputChange}
           placeholder="At least 8 characters"
+          errorMessage={
+            validationErrors.password
+              ? 'Password must be at least 8 characters'
+              : ''
+          }
         />
 
         <LoginForm
@@ -85,13 +147,19 @@ const Signup = () => {
           type="password"
           name="confirmPassword"
           id="confirmPassword"
+          onChange={handleInputChange}
           placeholder="At least 8 characters"
+          errorMessage={
+            validationErrors.password
+              ? 'Password must be at least 8 characters'
+              : ''
+          }
         />
         <Button
           name={loading ? 'Creating account...' : 'Create account'}
           type="submit"
-          className={`text-white ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={loading}
+          className={`text-white ${loading || !isFormValid() ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading || !isFormValid()}
         />
       </form>
       <div className="flex flex-col gap-2 items-center">
@@ -103,6 +171,18 @@ const Signup = () => {
           <p className="cursor-pointer text-[#633CFF]">Login</p>
         </Link>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
