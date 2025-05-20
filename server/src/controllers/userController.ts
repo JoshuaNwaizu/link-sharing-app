@@ -67,6 +67,7 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       const mongoError = error as MongoError;
       if (mongoError.code === 11000) {
         res.status(400).json({ message: 'User already exists' });
+        console.error('User already exists:', mongoError);
         return;
       }
       res.status(500).json({ message: 'Internal server error' });
@@ -170,39 +171,5 @@ const protectedRoute = catchAsync(
     }
   },
 );
-// const protectedRoute = catchAsync(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     console.log('Auth Headers:', req.headers.authorization);
-//     // Get the token from the cookies
-//     try {
-//       const token = req.headers.authorization?.split(' ')[1];
-//       if (!token) {
-//         console.log('you are not logged in');
-//         res
-//           .status(403)
-//           .json({ message: 'You are not logged in', success: false });
-//         return;
-//       }
-
-//       // Verify the token
-//       const decoded = jwt.verify(token, jwtSecret) as { id: string };
-//       console.log('Decoded token:', decoded);
-//       const currentUser = await User.findById(decoded.id);
-//       if (!currentUser) {
-//         res.status(403).json({
-//           message: ' The user belonging to this token no longer exist',
-//           success: false,
-//         });
-//         return;
-//       }
-//       req.user = currentUser;
-//       console.log('Authenticated User ID:', (req as any).user._id);
-
-//       next();
-//     } catch (error: unknown) {
-//       res.status(403).json({ message: 'Invalid token. Please Login' });
-//     }
-//   },
-// );
 
 export { createAccount, login, protectedRoute };

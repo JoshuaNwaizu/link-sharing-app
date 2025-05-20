@@ -38,7 +38,9 @@ const Nav = () => {
                     fill={isActive ? '#633CFF' : '#737373'}
                   />
                 </svg>
-                <p className="max-sm:hidden font-semibold leading-[1.5rem]">
+                <p
+                  className={`max-sm:hidden ${isActive && 'text-[#633CFF]'} font-semibold leading-[1.5rem]`}
+                >
                   Links
                 </p>
               </div>
@@ -67,7 +69,9 @@ const Nav = () => {
                     fill={isActive ? '#633CFF' : '#737373'}
                   />
                 </svg>
-                <p className="max-sm:hidden font-semibold leading-[1.5rem]">
+                <p
+                  className={`max-sm:hidden ${isActive && 'text-[#633CFF]'} font-semibold leading-[1.5rem]`}
+                >
                   Profile details
                 </p>
               </div>
