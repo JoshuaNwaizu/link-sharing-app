@@ -11,6 +11,7 @@ import {
 } from '../utils/profileSlice';
 import { Profile } from '../utils/cleanUrl';
 import { ToastContainer, toast } from 'react-toastify';
+import Loader from './components/Loader';
 
 const ProfileDetails = () => {
   const dispatch = useAppDispatch();
@@ -81,13 +82,12 @@ const ProfileDetails = () => {
     try {
       // await dispatch(updateProfile(formDataToSend)).unwrap();
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
-      // Fetch updated profile data after successful updat
-      await dispatch(fetchProfile());
       toast.success('Profile updated successfully!', {
         position: 'top-right',
         autoClose: 3000,
         hideProgressBar: true,
-      });
+      }); // Fetch updated profile data after successful updat
+      await dispatch(fetchProfile());
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error('Failed to update profile. Please try again.', {
@@ -99,46 +99,49 @@ const ProfileDetails = () => {
   };
 
   return (
-    <section className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] lg:h-[52.125rem] xl:mt-0 xl:w-[50.5rem] w-full">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-[1.5rem] font-bold leading-[2.25rem]">
-          Profile Details
-        </h1>
-        <p className="text-[#737373] leading-[1.5rem]">
-          Add your details to create a personal touch to your profile.
-        </p>
-      </div>
-
-      <ProfilePicture
-        preview={preview || imageUrl}
-        onImageChange={handleImageChange}
-        fileInputRef={fileInputRef}
-      />
-
-      <ProfileForms
-        formData={{ firstName, lastName, email }}
-        onInputChange={handleInputChange}
-      />
-
-      <div className="mt-auto pt-4 w-full">
-        <hr className="border-gray-200" />
-        <div className="flex md:justify-end">
-          <Button
-            name={loading ? 'Saving...' : 'Save'}
-            type="button"
-            className={`mt-4 w-full md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem] ${
-              loading || !isFormValid ? 'opacity-50' : ''
-            }`}
-            onClick={handleSubmit}
-            disabled={loading || !isFormValid}
-          />
+    <>
+      {loading && <Loader />}
+      <section className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] lg:h-[52.125rem] xl:mt-0 xl:w-[50.5rem] w-full">
+        <div className="flex flex-col gap-3">
+          <h1 className="text-[1.5rem] font-bold leading-[2.25rem]">
+            Profile Details
+          </h1>
+          <p className="text-[#737373] leading-[1.5rem]">
+            Add your details to create a personal touch to your profile.
+          </p>
         </div>
-      </div>
-      <ToastContainer
-        position="top-right"
-        theme="light"
-      />
-    </section>
+
+        <ProfilePicture
+          preview={preview || imageUrl}
+          onImageChange={handleImageChange}
+          fileInputRef={fileInputRef}
+        />
+
+        <ProfileForms
+          formData={{ firstName, lastName, email }}
+          onInputChange={handleInputChange}
+        />
+
+        <div className="mt-auto pt-4 w-full">
+          <hr className="border-gray-200" />
+          <div className="flex md:justify-end">
+            <Button
+              name={loading ? 'Saving...' : 'Save'}
+              type="button"
+              className={`mt-4 w-full md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem] ${
+                loading || !isFormValid ? 'opacity-50' : ''
+              }`}
+              onClick={handleSubmit}
+              disabled={loading || !isFormValid}
+            />
+          </div>
+        </div>
+        <ToastContainer
+          position="top-right"
+          theme="light"
+        />
+      </section>
+    </>
   );
 };
 

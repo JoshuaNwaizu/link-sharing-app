@@ -1,25 +1,27 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { API } from '../App';
 import { RootState } from '../store';
 
 interface Link {
   id: string;
-
   url: string;
   platform: string;
   isDropDown: boolean;
+  selectedPlatform: null;
 }
 interface LinkState {
   toggleOption: string | null;
   status: 'idle' | 'loading' | 'failed';
   error: string | null;
   links: Link[];
+  selectedPlatform: string | null;
 }
 const initialState: LinkState = {
   toggleOption: null,
   links: [],
   error: null,
   status: 'idle',
+  selectedPlatform: null,
 };
 export const fetchLinks = createAsyncThunk(
   'link/fetchLinks',
@@ -105,6 +107,7 @@ const linkSlice = createSlice({
         url: '',
         platform: 'github',
         isDropDown: false,
+        selectedPlatform: null,
       });
     },
 
@@ -120,6 +123,18 @@ const linkSlice = createSlice({
     },
     removeLink: (state, action: { payload: string }) => {
       state.links = state.links.filter((link) => link.id !== action.payload);
+    },
+    setPlatform: (state, action: PayloadAction<string>) => {
+      state.selectedPlatform = action.payload;
+    },
+    updateLinkPlatform: (
+      state,
+      action: PayloadAction<{ index: number; platform: string }>,
+    ) => {
+      const { index, platform } = action.payload;
+      if (state.links[index]) {
+        state.links[index].platform = platform;
+      }
     },
   },
 
@@ -153,6 +168,12 @@ const linkSlice = createSlice({
   },
 });
 export { linkSlice };
-export const { toggleOptionTitle, addLink, updateLink, removeLink } =
-  linkSlice.actions;
+export const {
+  toggleOptionTitle,
+  addLink,
+  updateLink,
+  removeLink,
+  setPlatform,
+  updateLinkPlatform,
+} = linkSlice.actions;
 export default linkSlice.reducer;

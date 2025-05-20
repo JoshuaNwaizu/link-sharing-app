@@ -8,6 +8,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ToastContainer, toast } from 'react-toastify';
 import LoadingSkeleton from './components/LoadingSkeleton';
+import Loader from './components/Loader';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -56,55 +57,58 @@ const Home = () => {
   }
 
   return (
-    <div className="mt-[8rem]  xl:mt-0  lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem]  w-full">
-      <Hero />
-      <div className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar">
-        {links.length > 0 ? (
-          links.map((link) => (
-            <LinkCard
-              key={link.id}
-              id={link.id}
-              url={link.url}
-              platform={link.platform}
-            />
-          ))
-        ) : (
-          <div className="flex flex-col items-center  justify-center gap-3 py-8 ">
-            <img
-              src="/images/illustration-empty.svg"
-              alt=""
-              className="w-[7.79788rem] h-[5rem] md:w-[15.59581rem] md:h-[10rem]"
-            />
-            <h2 className="text-[#333] text-[1.5rem] font-bold leading-[2.2rem] ">
-              Let's get you started!
-            </h2>
-            <p className="text-[#737373] leading-[1.5rem] text-center">
-              Use the “Add new link” button to get started. Once you have more
-              than one link, you can reorder and edit them. We’re here to help
-              you share your profiles with everyone!
-            </p>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-auto pt-4 w-full">
-        <hr className="border-gray-200" />
-        <div className="flex md:justify-end">
-          <Button
-            name={status === 'loading' ? 'Saving...' : 'Save'}
-            type="button"
-            className={`mt-4 w-full md:w-auto text-white ${!links.length || (status === 'loading' && 'opacity-[0.25]')} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
-            onClick={handleSave}
-            disabled={status === 'loading' || !links.length}
-          />
+    <>
+      {status === 'loading' && <Loader />}
+      <div className="mt-[8rem]  xl:mt-0  lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem]  w-full">
+        <Hero />
+        <div className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar">
+          {links.length > 0 ? (
+            links.map((link) => (
+              <LinkCard
+                key={link.id}
+                id={link.id}
+                url={link.url}
+                platform={link.platform}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center  justify-center gap-3 py-8 ">
+              <img
+                src="/images/illustration-empty.svg"
+                alt=""
+                className="w-[7.79788rem] h-[5rem] md:w-[15.59581rem] md:h-[10rem]"
+              />
+              <h2 className="text-[#333] text-[1.5rem] font-bold leading-[2.2rem] ">
+                Let's get you started!
+              </h2>
+              <p className="text-[#737373] leading-[1.5rem] text-center">
+                Use the “Add new link” button to get started. Once you have more
+                than one link, you can reorder and edit them. We’re here to help
+                you share your profiles with everyone!
+              </p>
+            </div>
+          )}
         </div>
-      </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={true}
-      />
-    </div>
+
+        <div className="mt-auto pt-4 w-full">
+          <hr className="border-gray-200" />
+          <div className="flex md:justify-end">
+            <Button
+              name={status === 'loading' ? 'Saving...' : 'Save'}
+              type="button"
+              className={`mt-4 w-full md:w-auto text-white ${!links.length || (status === 'loading' && 'opacity-[0.25]')} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
+              onClick={handleSave}
+              disabled={status === 'loading' || links.length === 0}
+            />
+          </div>
+        </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={true}
+        />
+      </div>{' '}
+    </>
   );
 };
 ``;

@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import {
   removeLink,
+  setPlatform,
   toggleOptionTitle,
   updateLink,
+  updateLinkPlatform,
 } from '../../utils/linkSlice';
 
 export interface PlatformIcon {
@@ -44,9 +46,12 @@ const LinkCard = ({
   const { toggleOption } = useSelector((state: RootState) => state.link);
   const isOpen = toggleOption === id;
 
-  const handlePlatformSelect = (item: string) => {
+  const handlePlatformSelect = (item: string, index: number) => {
+    dispatch(setPlatform(platform));
+    dispatch(updateLinkPlatform({ index, platform }));
     setPlatformTitle(item);
-    setIsDropDown(false);
+    setIsDropDown(!isDropDown);
+
     dispatch(toggleOptionTitle(id));
     dispatch(updateLink({ id, url: currentUrl, platform: platformTitle }));
   };
@@ -89,7 +94,10 @@ const LinkCard = ({
       <div className="flex flex-col gap-3 mt-4">
         <div className="flex flex-col gap-3">
           <p>Platform</p>
-          <div className="flex items-center relative border border-[#D9D9D9] bg-white py-[0.75rem] rounded-[.5rem] px-[1rem] justify-between">
+          <div
+            className="flex items-center relative border border-[#D9D9D9] bg-white py-[0.75rem] rounded-[.5rem] px-[1rem] justify-between cursor-pointer"
+            onClick={handleToggleOption}
+          >
             <p className="flex items-center gap-3 ">
               <img
                 src={`/images/icon-${platformTitle}.svg`}
@@ -98,13 +106,13 @@ const LinkCard = ({
               <span className="capitalize">{platformTitle}</span>
             </p>
             <div
-              className={`flex flex-col absolute ${isOpen ? 'flex' : 'hidden'}  top-13 gap-2 z-10 left-0 bg-white shadow-2xl w-[17rem] rounded-[.5rem] p-5`}
+              className={`flex flex-col xl:h-[17rem] absolute xl:overflow-scroll  ${isOpen ? 'flex' : 'hidden'}  top-13 gap-2 z-10 left-0 xl:w-full bg-white shadow-2xl w-[17rem] rounded-[.5rem] p-5`}
             >
-              {platformNames.map((name, i) => (
+              {platformNames.map((name, index) => (
                 <p
-                  key={i}
-                  onClick={() => handlePlatformSelect(name)}
-                  className={`flex items-center gap-3 ${
+                  key={index}
+                  onClick={() => handlePlatformSelect(name, index)}
+                  className={`flex items-center cursor-pointer gap-3 ${
                     platformTitle === name
                       ? 'text-[#333] font-bold'
                       : 'text-[#737373]'
@@ -139,7 +147,7 @@ const LinkCard = ({
         </div>
         <div className="flex flex-col  gap-3">
           <p>Link</p>
-          <span className="flex items-center gap-3 bg-[#fff] border border-[#D9D9D9]  p-[1rem] rounded-[0.5rem]">
+          <span className="flex items-center transition-all duration-250 gap-3 bg-[#fff] border focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9]  p-[1rem] rounded-[0.5rem]">
             <img
               src="/images/icon-link.svg"
               alt="link"
@@ -149,7 +157,7 @@ const LinkCard = ({
               type="text"
               value={currentUrl}
               placeholder="e.g. https://www.github.com/johnappleseed"
-              className="bg-white outline-none border-none"
+              className=" outline-none border-none bg-white w-full"
               onChange={handleUrlChange}
             />
           </span>

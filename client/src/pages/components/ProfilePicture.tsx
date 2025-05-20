@@ -27,16 +27,14 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
         id="file-upload"
         name="file-upload"
         onChange={onImageChange}
-        accept="image/*"
+        accept="image/jpg,image/png"
         hidden
         ref={fileInputRef}
       />
 
       <label
         htmlFor="file-upload"
-        // className={`bg-[#EFEBFF] ${
-        //   preview ? '' : 'pt-[3.8125rem] pb-[3.75rem]'
-        // } w-[13rem] rounded-[0.75rem] pr-[2.375rem] pl-[2.4375rem] flex flex-col justify-center gap-2 items-center cursor-pointer`}
+        className="cursor-pointer"
       >
         {preview ? (
           <div className="relative  w-[12rem] h-[12rem] group">

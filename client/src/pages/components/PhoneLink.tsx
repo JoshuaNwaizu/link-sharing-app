@@ -27,6 +27,7 @@ const PhoneLink = () => {
     (state: RootState) => state.profile,
   );
   const dispatch = useDispatch<AppDispatch>();
+  // const [dataError, setDataError] = useState<boolean>(false);
 
   const { links, status } = useSelector((state: RootState) => state.link);
   const emptyRects = Array.from({ length: 5 }, (_, i) => ({
