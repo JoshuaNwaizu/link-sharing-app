@@ -15,9 +15,8 @@ import Loader from './components/Loader';
 
 const ProfileDetails = () => {
   const dispatch = useAppDispatch();
-  const { firstName, lastName, email, imageUrl, loading } = useSelector(
-    (state: RootState) => state.profile,
-  );
+  const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
+    useSelector((state: RootState) => state.profile);
 
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -36,6 +35,7 @@ const ProfileDetails = () => {
               lastName: profile.lastName,
               email: profile.email,
               imageUrl: profile.image?.url || null,
+              isEmailDisabled,
             }),
           );
           setPreview(profile.image?.url || null);
@@ -52,6 +52,7 @@ const ProfileDetails = () => {
         lastName: name === 'lastName' ? value : lastName,
         email: name === 'email' ? value : email,
         imageUrl: preview || imageUrl,
+        isEmailDisabled,
       }),
     );
   };
@@ -118,7 +119,7 @@ const ProfileDetails = () => {
         />
 
         <ProfileForms
-          formData={{ firstName, lastName, email }}
+          formData={{ firstName, lastName, email, isEmailDisabled }}
           onInputChange={handleInputChange}
         />
 

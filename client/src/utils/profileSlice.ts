@@ -11,6 +11,7 @@ interface ProfileState {
   loading: boolean;
   error: string | null;
   success: boolean;
+  isEmailDisabled: boolean;
 }
 
 const initialState: ProfileState = {
@@ -21,6 +22,7 @@ const initialState: ProfileState = {
   loading: false,
   error: null,
   success: false,
+  isEmailDisabled: true,
 };
 
 const profileSlice = createSlice({
@@ -46,6 +48,7 @@ const profileSlice = createSlice({
       state.lastName = lastName;
       state.email = email;
       state.imageUrl = imageUrl;
+      state.isEmailDisabled = true;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -56,8 +59,10 @@ const profileSlice = createSlice({
     setSuccess: (state, action: PayloadAction<boolean>) => {
       state.success = action.payload;
     },
+
     resetProfile: () => initialState,
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchProfile.pending, (state) => {
@@ -129,6 +134,7 @@ export const fetchProfileById =
           lastName: data.lastName,
           email: data.email,
           imageUrl: data.image?.url || null,
+          isEmailDisabled: true,
         }),
       );
     } catch (error) {
@@ -158,7 +164,12 @@ export const fetchProfile = createAsyncThunk(
       if (!response.ok) throw new Error('Failed to fetch profile');
 
       const data = await response.json();
-
+      if (data) {
+        return {
+          ...data,
+          isEmailDisabled: true,
+        };
+      }
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -196,6 +207,7 @@ export const updateProfile = createAsyncThunk(
           lastName: data.lastName,
           email: data.email,
           imageUrl: data.image?.url || null,
+          isEmailDisabled: true,
         }),
       );
 
@@ -255,6 +267,7 @@ export const saveOrUpdateProfile = createAsyncThunk(
           lastName: data.lastName,
           email: data.email,
           imageUrl: data.image?.url || null,
+          isEmailDisabled: true,
         }),
       );
 
@@ -306,6 +319,7 @@ export const saveProfile =
           lastName: data.lastName,
           email: data.email,
           imageUrl: data.image?.url || null,
+          isEmailDisabled: true,
         }),
       );
       dispatch(setSuccess(true));

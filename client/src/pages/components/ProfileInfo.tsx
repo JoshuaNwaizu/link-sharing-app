@@ -129,7 +129,7 @@ const ProfileInfo = () => {
                     src={`/images/icon-${link.platform}.svg`}
                     alt=""
                   />
-                  <p>{link.platform}</p>
+                  <p className="capitalize">{link.platform}</p>
                 </span>
 
                 <a

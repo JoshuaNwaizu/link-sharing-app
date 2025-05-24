@@ -3,6 +3,7 @@ interface ProfileFormsProps {
     firstName: string;
     lastName: string;
     email: string;
+    isEmailDisabled: boolean;
   };
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -59,7 +60,13 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
         >
           Email
         </label>
-        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center px-[1rem]">
+        <div
+          className={`flex gap-2 ${
+            formData.isEmailDisabled
+              ? 'bg-[#F0F0F0] text-[#737373] cursor-not-allowed'
+              : ''
+          } py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center px-[1rem]`}
+        >
           <input
             type="email"
             className="border-none outline-none xl:w-[27rem]"
@@ -68,6 +75,7 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
             id="email"
             value={formData.email}
             onChange={onInputChange}
+            disabled={formData.isEmailDisabled}
             required
           />
         </div>

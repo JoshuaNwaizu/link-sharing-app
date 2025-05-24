@@ -7,33 +7,42 @@ import { API } from '../../App';
 import { fetchProfileById } from '../../utils/profileSlice';
 
 export const platformColors = {
-  facebook: '#2442AC',
-  freecodecamp: '#302267',
-  'frontend-mentor': '#302267',
   github: '#1A1A1A',
+  frontendmentor: '#FAFAFA',
+  twitter: '#43B7E9',
+  linkedin: '#2D68FF',
+  youtube: '#EE3939',
+  facebook: '#2442AC',
+  twitch: '#EE3FC8',
+  devto: '#333',
+  codewars: '#8A1A50',
+  freecodecamp: '#302267',
   gitlab: '#EB4925',
   hashnode: '#0330D1',
-  linkedin: '#2D68FF',
-  'stack-overflow': '#EC7100',
-  twitter: '#43B7E9',
-  twitch: '#EE3FC8',
-  youtube: '#EE3939',
-  'dev.to': '#333',
-  codewars: '#43B7E9',
-} as const;
+  stackoverflow: '#EC7100',
+};
 
 const PhoneLink = () => {
   const { firstName, lastName, email, imageUrl } = useSelector(
     (state: RootState) => state.profile,
   );
   const dispatch = useDispatch<AppDispatch>();
-  // const [dataError, setDataError] = useState<boolean>(false);
 
-  const { links, status } = useSelector((state: RootState) => state.link);
+  const { links } = useSelector((state: RootState) => state.link);
   const emptyRects = Array.from({ length: 5 }, (_, i) => ({
     id: `empty-${i}`,
     y: 278 + i * 64,
   }));
+  const getPlatformColor = (platform: string): string => {
+    const normalizedPlatform = platform.toLowerCase().replace(/[.\s-]/g, '');
+    return (
+      platformColors[normalizedPlatform as keyof typeof platformColors] ||
+      '#1A1A1A'
+    );
+  };
+  const isLightBackground = (color: string): boolean => {
+    return color === '#FAFAFA' || color === '#FFFFFF';
+  };
   useEffect(() => {
     const getProfileAndLinks = async () => {
       const token = localStorage.getItem('token');
@@ -60,14 +69,27 @@ const PhoneLink = () => {
         }
 
         const data = await res.json();
+        console.log(data);
 
         if (!data) {
-          // setDataError(true);
           return;
         }
+        const linksRes = await fetch(`${API}/links`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!linksRes.ok) {
+          throw new Error(`Failed to fetch links: ${linksRes.status}`);
+        }
+
+        await linksRes.json();
 
         // Dispatch actions to fetch profile and links
         await dispatch(fetchProfileById(data._id));
+
         await dispatch(fetchLinks());
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -78,9 +100,9 @@ const PhoneLink = () => {
     getProfileAndLinks();
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchLinks());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchLinks());
+  // }, [dispatch]);
 
   return (
     <div className="max-xl:hidden t h-[52.125rem] rounded-[1rem] bg-white p-[1.5rem] w-[30rem] items-center flex justify-center">
@@ -93,79 +115,7 @@ const PhoneLink = () => {
         className="ext-white"
       >
         {/* Phone frame paths */}
-        {status === 'loading'
-          ? emptyRects.map((rect) => (
-              <rect
-                key={rect.id}
-                width="237"
-                height="44"
-                x="35"
-                y={rect.y}
-                fill="#EEE"
-                rx="8"
-              />
-            ))
-          : links.length > 0
-            ? links.map((link, index) => {
-                // Get the color for this platform, default to #1A1A1A if not found
-                const platformKey =
-                  link.platform.toLowerCase() as keyof typeof platformColors;
-                const color = platformColors[platformKey] || '#1A1A1A';
-                console.log(color);
-                return (
-                  <g
-                    key={link.id || index}
-                    transform={`translate(35, ${278 + index * 64})`}
-                  >
-                    <a
-                      href={cleanUrl(link.url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <rect
-                        width="237"
-                        height="44"
-                        fill={color}
-                        rx="8"
-                      />
-                      <image
-                        href={`/images/icon-${link.platform.toLowerCase()}.svg`}
-                        x="16"
-                        y="12"
-                        width="18"
-                        height="18"
-                      />
-                      <text
-                        x="48"
-                        y="28"
-                        fill="#fff"
-                        fontSize="14"
-                        className="capitalize"
-                      >
-                        {link.platform}
-                      </text>
-                      <image
-                        href="/images/icon-arrow-right.svg"
-                        x="205"
-                        y="12"
-                        width="20"
-                        height="20"
-                      />
-                    </a>
-                  </g>
-                );
-              })
-            : emptyRects.map((rect) => (
-                <rect
-                  key={rect.id}
-                  width="237"
-                  height="44"
-                  x="35"
-                  y={rect.y}
-                  fill="#EEE"
-                  rx="8"
-                />
-              ))}
+
         <path
           stroke="#737373"
           d="M1 54.5C1 24.953 24.953 1 54.5 1h199C283.047 1 307 24.953 307 54.5v523c0 29.547-23.953 53.5-53.5 53.5h-199C24.953 631 1 607.047 1 577.5v-523Z"
@@ -175,7 +125,6 @@ const PhoneLink = () => {
           stroke="#737373"
           d="M12 55.5C12 30.923 31.923 11 56.5 11h24C86.851 11 92 16.149 92 22.5c0 8.008 6.492 14.5 14.5 14.5h95c8.008 0 14.5-6.492 14.5-14.5 0-6.351 5.149-11.5 11.5-11.5h24c24.577 0 44.5 19.923 44.5 44.5v521c0 24.577-19.923 44.5-44.5 44.5h-195C31.923 621 12 601.077 12 576.5v-521Z"
         />
-
         {/* Profile Image - Empty or Actual */}
         <circle
           cx="153.5"
@@ -204,7 +153,6 @@ const PhoneLink = () => {
             />
           </>
         )}
-
         {/* Name - Empty or Actual */}
         {firstName && lastName ? (
           <text
@@ -228,7 +176,6 @@ const PhoneLink = () => {
             rx="8"
           />
         )}
-
         {/* Email - Empty or Actual */}
         {email ? (
           <text
@@ -251,53 +198,57 @@ const PhoneLink = () => {
             rx="4"
           />
         )}
-
         {/* Links - Empty or Actual */}
         {links.length > 0
-          ? links.map((link, index) => (
-              <g
-                key={link.id}
-                transform={`translate(35, ${278 + index * 64})`}
-              >
-                <a
-                  href={cleanUrl(link.url)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+          ? links.map((link, index) => {
+              const bgColor = getPlatformColor(link.platform);
+              const textColor = isLightBackground(bgColor) ? '#000' : '#fff';
+
+              return (
+                <g
+                  key={link.id}
+                  transform={`translate(35, ${278 + index * 64})`}
                 >
-                  <rect
-                    width="237"
-                    height="44"
-                    fill="#1A1A1A"
-                    rx="8"
-                  />
-                  <image
-                    href={`/images/icon-${link.platform.toLowerCase()}.svg`}
-                    x="16"
-                    y="12"
-                    width="18"
-                    height="18"
-                  />
-                  <text
-                    x="48"
-                    y="28"
-                    fill="#fff"
-                    fontSize="14"
-                    className="capitalize"
+                  <a
+                    href={cleanUrl(link.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    {link.platform}
-                  </text>
-                  <image
-                    href="/images/icon-arrow-right.svg"
-                    x="205" /* Changed from default to right-aligned position */
-                    y="12"
-                    width="20" /* Reduced from 96 */
-                    height="20"
-                    clipPath="circle(48px at center)"
-                  />
-                </a>
-              </g>
-            ))
-          : emptyRects.map((rect) => (
+                    <rect
+                      width="237"
+                      height="44"
+                      fill={bgColor}
+                      rx="8"
+                    />
+                    <image
+                      href={`/images/icon-${link.platform.toLowerCase()}.svg`}
+                      x="16"
+                      y="12"
+                      width="18"
+                      height="18"
+                    />
+                    <text
+                      x="48"
+                      y="28"
+                      fill={textColor}
+                      fontSize="14"
+                      className="capitalize"
+                    >
+                      {link.platform}
+                    </text>
+                    <image
+                      href="/images/icon-arrow-right.svg"
+                      x="205"
+                      y="12"
+                      width="20"
+                      height="20"
+                    />
+                  </a>
+                </g>
+              );
+            })
+          : // ...existing empty rects mapping...
+            emptyRects.map((rect) => (
               <rect
                 key={rect.id}
                 width="237"
@@ -312,5 +263,4 @@ const PhoneLink = () => {
     </div>
   );
 };
-
 export default PhoneLink;

@@ -1,11 +1,13 @@
 import { FiLogOut } from 'react-icons/fi';
 import { Link, NavLink, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-hot-toast';
 
 const Nav = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove token from storage
-    // toast.success('Logged out successfully');
+    toast.success('Logged out successfully');
     navigate('/auth/login'); // Redirect to login page
   };
   return (
