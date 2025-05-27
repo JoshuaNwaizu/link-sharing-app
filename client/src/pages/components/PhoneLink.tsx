@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import cleanUrl from '../../utils/cleanUrl';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchLinks } from '../../utils/linkSlice';
 import { API } from '../../App';
 import { fetchProfileById } from '../../utils/profileSlice';
+import { motion } from 'framer-motion';
 
 export const platformColors = {
   github: '#1A1A1A',
@@ -23,9 +24,17 @@ export const platformColors = {
 };
 
 const PhoneLink = () => {
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    imageUrl: '',
+  });
   const { firstName, lastName, email, imageUrl } = useSelector(
     (state: RootState) => state.profile,
   );
+
+  // const profileState = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>();
 
   const { links } = useSelector((state: RootState) => state.link);
@@ -43,6 +52,7 @@ const PhoneLink = () => {
   const isLightBackground = (color: string): boolean => {
     return color === '#FAFAFA' || color === '#FFFFFF';
   };
+
   useEffect(() => {
     const getProfileAndLinks = async () => {
       const token = localStorage.getItem('token');
@@ -100,19 +110,40 @@ const PhoneLink = () => {
     getProfileAndLinks();
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   dispatch(fetchLinks());
-  // }, [dispatch]);
+  useEffect(() => {
+    setUserData({
+      firstName: firstName || '',
+      lastName: lastName || '',
+      email: email || '',
+      imageUrl: imageUrl || '',
+    });
+  }, [firstName, lastName, email, imageUrl]);
 
   return (
-    <div className="max-xl:hidden t h-[52.125rem] rounded-[1rem] bg-white p-[1.5rem] w-[30rem] items-center flex justify-center">
-      <svg
+    <div className="max-xl:hidden bg-white h-[52.125rem] rounded-[1rem]  p-[1.5rem] w-[30rem] items-center flex justify-center">
+      <motion.svg
+        initial={{
+          x: -100,
+          rotate: -10,
+          opacity: 0,
+        }}
+        animate={{
+          x: 0,
+          rotate: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.8,
+          type: 'spring',
+          stiffness: 100,
+          damping: 15,
+        }}
         xmlns="http://www.w3.org/2000/svg"
         width="308"
         height="632"
         fill="none"
         viewBox="0 0 308 632"
-        className="ext-white"
+        className="text-white "
       >
         {/* Phone frame paths */}
 
@@ -143,6 +174,14 @@ const PhoneLink = () => {
                 />
               </clipPath>
             </defs>{' '}
+            <circle
+              cx="153.5"
+              cy="112"
+              r="49"
+              stroke="#633CFF"
+              strokeWidth="4"
+              fill="none"
+            />
             <image
               href={imageUrl}
               x="105.5"
@@ -154,7 +193,7 @@ const PhoneLink = () => {
           </>
         )}
         {/* Name - Empty or Actual */}
-        {firstName && lastName ? (
+        {userData.firstName || userData.lastName ? (
           <text
             x="153.5"
             y="193"
@@ -164,7 +203,7 @@ const PhoneLink = () => {
             fontWeight="bold"
             fontFamily="Arial"
           >
-            {`${firstName} ${lastName}`}
+            {`${userData.firstName || ''} ${userData.lastName || ''}`.trim()}
           </text>
         ) : (
           <rect
@@ -198,68 +237,82 @@ const PhoneLink = () => {
             rx="4"
           />
         )}
-        {/* Links - Empty or Actual */}
-        {links.length > 0
-          ? links.map((link, index) => {
-              const bgColor = getPlatformColor(link.platform);
-              const textColor = isLightBackground(bgColor) ? '#000' : '#fff';
 
-              return (
-                <g
-                  key={link.id}
-                  transform={`translate(35, ${278 + index * 64})`}
-                >
-                  <a
-                    href={cleanUrl(link.url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <rect
-                      width="237"
-                      height="44"
-                      fill={bgColor}
-                      rx="8"
+        <foreignObject
+          x="35"
+          y="278"
+          width="237"
+          height="300"
+        >
+          <div
+            className="h-full overflow-y-auto custom-scrollbar"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#633CFF #FAFAFA',
+            }}
+          >
+            <div className="space-y-4 pr-2">
+              {links.length > 0
+                ? links.map((link, index) => {
+                    const bgColor = getPlatformColor(link.platform);
+                    const textColor = isLightBackground(bgColor)
+                      ? '#000'
+                      : '#fff';
+
+                    return (
+                      <motion.a
+                        key={link.id}
+                        href={cleanUrl(link.url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                        initial={{ x: index % 2 === 0 ? -50 : 50, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 100,
+                          damping: 15,
+                          delay: index * 0.1,
+                        }}
+                      >
+                        <div
+                          className="relative h-11 rounded-lg flex items-center px-4"
+                          style={{ backgroundColor: bgColor }}
+                        >
+                          <img
+                            src={`/images/icon-${link.platform.toLowerCase()}.svg`}
+                            alt=""
+                            className="w-4 h-4"
+                          />
+                          <span
+                            className={`ml-3 capitalize ${
+                              textColor === '#000' ? 'text-black' : 'text-white'
+                            }`}
+                          >
+                            {link.platform}
+                          </span>
+                          <img
+                            src="/images/icon-arrow-right.svg"
+                            alt=""
+                            className="w-5 h-5 absolute right-4"
+                          />
+                        </div>
+                      </motion.a>
+                    );
+                  })
+                : emptyRects.map((rect) => (
+                    <motion.div
+                      key={rect.id}
+                      className="h-11 bg-[#EEE] rounded-lg"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
                     />
-                    <image
-                      href={`/images/icon-${link.platform.toLowerCase()}.svg`}
-                      x="16"
-                      y="12"
-                      width="18"
-                      height="18"
-                    />
-                    <text
-                      x="48"
-                      y="28"
-                      fill={textColor}
-                      fontSize="14"
-                      className="capitalize"
-                    >
-                      {link.platform}
-                    </text>
-                    <image
-                      href="/images/icon-arrow-right.svg"
-                      x="205"
-                      y="12"
-                      width="20"
-                      height="20"
-                    />
-                  </a>
-                </g>
-              );
-            })
-          : // ...existing empty rects mapping...
-            emptyRects.map((rect) => (
-              <rect
-                key={rect.id}
-                width="237"
-                height="44"
-                x="35"
-                y={rect.y}
-                fill="#EEE"
-                rx="8"
-              />
-            ))}
-      </svg>
+                  ))}
+            </div>
+          </div>
+        </foreignObject>
+      </motion.svg>
     </div>
   );
 };

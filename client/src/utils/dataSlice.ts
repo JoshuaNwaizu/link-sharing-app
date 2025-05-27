@@ -25,6 +25,7 @@ export const fetchData = createAsyncThunk(
       const response: any = await fetch(url, {
         method,
         body,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           ...headers,

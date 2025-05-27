@@ -110,7 +110,9 @@ const linkSlice = createSlice({
         selectedPlatform: null,
       });
     },
-
+    reorderLinks: (state, action) => {
+      state.links = action.payload;
+    },
     updateLink: (
       state,
       action: { payload: { id: string; url: string; platform: string } },
@@ -175,5 +177,6 @@ export const {
   removeLink,
   setPlatform,
   updateLinkPlatform,
+  reorderLinks,
 } = linkSlice.actions;
 export default linkSlice.reducer;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import {
@@ -27,52 +27,128 @@ const platformNames: string[] = [
   'twitch',
   'youtube',
   'linkedin',
-  'dev.to',
+  'devto',
   'codewars',
 ];
+
+const platformPrefixes: { [key: string]: string } = {
+  github: 'https://www.github.com/',
+  facebook: 'https://www.facebook.com/',
+  twitter: 'https://twitter.com/',
+  linkedin: 'https://www.linkedin.com/in/',
+  youtube: 'https://www.youtube.com/',
+  freecodecamp: 'https://www.freecodecamp.org/',
+  'frontend-mentor': 'https://www.frontendmentor.io/',
+  gitlab: 'https://gitlab.com/',
+  hashnode: 'https://hashnode.com/@',
+  'stack-overflow': 'https://stackoverflow.com/users/',
+  twitch: 'https://www.twitch.tv/',
+  devto: 'https://dev.to/',
+  codewars: 'https://www.codewars.com/users/',
+};
+
+const isValidUrl = (url: string, platform: string): boolean => {
+  const prefix = platformPrefixes[platform];
+  if (!url.startsWith(prefix)) return false;
+
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const LinkCard = ({
   id,
   url = '',
   platform = 'github',
+  dragHandleProps,
 }: {
   id: string;
   url?: string;
   platform?: string;
+  dragHandleProps?: React.HTMLAttributes<HTMLImageElement>;
 }) => {
   const [platformTitle, setPlatformTitle] = useState<string>(platform);
   const [isDropDown, setIsDropDown] = useState<boolean>(false);
-  const [currentUrl, setCurrentUrl] = useState<string>(url);
+  const [userInput, setUserInput] = useState('');
   const dispatch = useDispatch<AppDispatch>();
+  const [error, setError] = useState<string>('');
   const { toggleOption } = useSelector((state: RootState) => state.link);
   const isOpen = toggleOption === id;
 
-  const handlePlatformSelect = (item: string, index: number) => {
-    dispatch(setPlatform(platform));
-    dispatch(updateLinkPlatform({ index, platform }));
-    setPlatformTitle(item);
-    setIsDropDown(!isDropDown);
+  useEffect(() => {
+    const prefix = platformPrefixes[platformTitle] || '';
+    const userPart = url.replace(prefix, '');
+    setUserInput(userPart || '');
+  }, [platformTitle, url]);
 
+  const handlePlatformSelect = (item: string, index: number) => {
+    if (item === platformTitle) {
+      setIsDropDown(false);
+      dispatch(toggleOptionTitle('')); // Close the dropdown in Redux too
+      return;
+    }
+    setPlatformTitle(item);
+    setIsDropDown(false);
+    setError('');
+
+    const prefix = platformPrefixes[item] || '';
+    setUserInput('');
+    dispatch(setPlatform(item));
+    dispatch(updateLinkPlatform({ index, platform: item }));
     dispatch(toggleOptionTitle(id));
-    dispatch(updateLink({ id, url: currentUrl, platform: platformTitle }));
+    dispatch(
+      updateLink({
+        id,
+        url: prefix,
+        platform: item,
+      }),
+    );
   };
+
   const handleToggleOption = () => {
-    dispatch(toggleOptionTitle(id));
-    setIsDropDown(!isDropDown);
+    if (toggleOption === id) {
+      // Already open, so close it
+      dispatch(toggleOptionTitle(''));
+      setIsDropDown(false);
+    } else {
+      dispatch(toggleOptionTitle(id));
+      setIsDropDown(true);
+    }
   };
   const handleRemoveLink = () => {
     dispatch(removeLink(id));
   };
+
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newUrl = e.target.value;
-    setCurrentUrl(newUrl);
+    const newUserInput = e.target.value;
+    setUserInput(newUserInput);
+    setError('');
+
+    const prefix = platformPrefixes[platformTitle] || '';
+    const fullUrl = `${prefix}${newUserInput}`;
+
+    if (!newUserInput) {
+      setError("Can't be empty");
+    } else if (!isValidUrl(fullUrl, platformTitle)) {
+      setError('Please check the URL');
+    }
+
     dispatch(
       updateLink({
         id,
-        url: newUrl,
+        url: fullUrl,
         platform: platformTitle,
       }),
     );
   };
+
+  useEffect(() => {
+    setPlatformTitle(platform);
+  }, [platform]);
+
   return (
     <div className="bg-[#FAFAFA] p-[1.25rem] rounded-[0.75rem]">
       <div className="flex items-center justify-between">
@@ -80,9 +156,10 @@ const LinkCard = ({
           <img
             src="/images/icon-drag-and-drop.svg"
             alt="drag and drop"
-            className="w-[.75rem] "
+            className="w-[.75rem] bg-red-300"
+            {...(dragHandleProps || {})}
           />
-          <h1 className="text-[1rem] font-bold  tex-[#737373]">Link #{id}</h1>
+          <h1 className="text-[1rem] font-bold tex-[#737373]">Link #{id}</h1>
         </span>
         <p
           className="text-[#737373] cursor-pointer"
@@ -91,7 +168,9 @@ const LinkCard = ({
           Remove
         </p>
       </div>
+
       <div className="flex flex-col gap-3 mt-4">
+        {/* PLATFORM DROPDOWN */}
         <div className="flex flex-col gap-3">
           <p>Platform</p>
           <div
@@ -127,7 +206,6 @@ const LinkCard = ({
                 </p>
               ))}
             </div>
-
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"
@@ -135,32 +213,38 @@ const LinkCard = ({
               viewBox="0 0 14 9"
               fill="none"
               onClick={handleToggleOption}
-              className={`cursor-pointer ${isOpen && 'rotate-[180deg]'}`}
+              className={`cursor-pointer ${isDropDown && 'rotate-[180deg]'}`}
             >
               <path
                 d="M1 1L7 7L13 1"
                 stroke="#633CFF"
-                stroke-width="2"
+                strokeWidth="2"
               />
             </svg>
           </div>
         </div>
-        <div className="flex flex-col  gap-3">
+
+        {/* URL INPUT */}
+        <div className="flex flex-col gap-3">
           <p>Link</p>
-          <span className="flex items-center transition-all duration-250 gap-3 bg-[#fff] border focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9]  p-[1rem] rounded-[0.5rem]">
+          <span className="flex items-center transition-all duration-250 gap-2 bg-[#fff] border focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] p-[1rem] rounded-[0.5rem]">
             <img
               src="/images/icon-link.svg"
               alt="link"
               className="w-[1rem]"
             />
+            <span className="text-[#737373] text-sm select-none">
+              {platformPrefixes[platformTitle]}
+            </span>
             <input
               type="text"
-              value={currentUrl}
-              placeholder="e.g. https://www.github.com/johnappleseed"
-              className=" outline-none border-none bg-white w-full"
+              value={userInput}
+              placeholder="e.g. johnappleseed"
+              className="outline-none border-none bg-white w-full"
               onChange={handleUrlChange}
             />
           </span>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
       </div>
     </div>

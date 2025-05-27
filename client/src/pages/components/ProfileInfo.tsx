@@ -25,6 +25,17 @@ const ProfileInfo = () => {
     dispatch(fetchProfileById(data._id));
     dispatch(fetchLinks());
   };
+  const getPlatformColor = (platform: string): string => {
+    // Normalize: remove dashes, dots, spaces, and lowercase
+    const normalized = platform.toLowerCase().replace(/[\s.-]/g, '');
+    return (
+      platformColors[normalized as keyof typeof platformColors] || '#1A1A1A'
+    );
+  };
+  const isLightBackground = (color: string): boolean => {
+    return color === '#FAFAFA' || color === '#FFFFFF';
+  };
+
   useEffect(() => {
     const getProfile = async () => {
       const token = localStorage.getItem('token'); // or from cookies if you're using cookies
@@ -113,37 +124,42 @@ const ProfileInfo = () => {
         </div>
         <div>
           <div className="flex flex-col gap-2">
-            {links.map((link) => (
-              <div
-                key={link.url}
-                className="flex items-center justify-between bg-[#1A1A1A] text-white p-4 rounded-lg"
-                style={{
-                  backgroundColor:
-                    platformColors[
-                      link.platform.toLowerCase() as keyof typeof platformColors
-                    ] || '#1A1A1A',
-                }}
-              >
-                <span className="flex gap-2">
-                  <img
-                    src={`/images/icon-${link.platform}.svg`}
-                    alt=""
-                  />
-                  <p className="capitalize">{link.platform}</p>
-                </span>
+            {links.map((link) => {
+              const bgColor = getPlatformColor(link.platform);
+              const textColor = isLightBackground(bgColor)
+                ? 'text-black'
+                : 'text-white';
 
+              return (
                 <a
                   href={cleanUrl(link.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img
-                    src="/images/icon-arrow-right.svg"
-                    alt="arrow"
-                  />
+                  {' '}
+                  <div
+                    key={link.url}
+                    className={`flex items-center justify-between p-4 rounded-lg ${textColor}`}
+                    style={{
+                      backgroundColor: bgColor,
+                    }}
+                  >
+                    <span className="flex gap-2">
+                      <img
+                        src={`/images/icon-${link.platform}.svg`}
+                        alt=""
+                      />
+                      <p className="capitalize">{link.platform}</p>
+                    </span>
+
+                    <img
+                      src="/images/icon-arrow-right.svg"
+                      alt="arrow"
+                    />
+                  </div>
                 </a>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

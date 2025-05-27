@@ -9,12 +9,28 @@ import { useNavigate } from 'react-router';
 import { ToastContainer, toast } from 'react-toastify';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import Loader from './components/Loader';
-
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from '@hello-pangea/dnd';
+// ...other imports...
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { links, status } = useSelector((state: RootState) => state.link);
 
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    if (result.source.index === result.destination.index) return;
+
+    const reorderedLinks = Array.from(links);
+    const [removed] = reorderedLinks.splice(result.source.index, 1);
+    reorderedLinks.splice(result.destination.index, 0, removed);
+
+    dispatch({ type: 'link/reorderLinks', payload: reorderedLinks });
+  };
   const fetchUserLinks = useCallback(async () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -59,36 +75,63 @@ const Home = () => {
   return (
     <>
       {status === 'loading' && <Loader />}
-      <div className="mt-[8rem]  xl:mt-0  lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7  rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem]  w-full">
+      <div className="mt-[8rem] xl:mt-0 lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem] w-full">
         <Hero />
-        <div className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar">
-          {links.length > 0 ? (
-            links.map((link) => (
-              <LinkCard
-                key={link.id}
-                id={link.id}
-                url={link.url}
-                platform={link.platform}
-              />
-            ))
-          ) : (
-            <div className="flex flex-col items-center  justify-center gap-3 py-8 ">
-              <img
-                src="/images/illustration-empty.svg"
-                alt=""
-                className="w-[7.79788rem] h-[5rem] md:w-[15.59581rem] md:h-[10rem]"
-              />
-              <h2 className="text-[#333] text-[1.5rem] font-bold leading-[2.2rem] ">
-                Let's get you started!
-              </h2>
-              <p className="text-[#737373] leading-[1.5rem] text-center">
-                Use the “Add new link” button to get started. Once you have more
-                than one link, you can reorder and edit them. We’re here to help
-                you share your profiles with everyone!
-              </p>
-            </div>
-          )}
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="links-droppable">
+            {(provided) => (
+              <div
+                className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {links.length > 0 ? (
+                  links.map((link, index) => (
+                    <Draggable
+                      key={link.id}
+                      draggableId={link.id.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <LinkCard
+                            id={link.id}
+                            url={link.url}
+                            platform={link.platform}
+                            dragHandleProps={
+                              provided.dragHandleProps ?? undefined
+                            }
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-3 py-8 ">
+                    <img
+                      src="/images/illustration-empty.svg"
+                      alt=""
+                      className="w-[7.79788rem] h-[5rem] md:w-[15.59581rem] md:h-[10rem]"
+                    />
+                    <h2 className="text-[#333] text-[1.5rem] font-bold leading-[2.2rem] ">
+                      Let's get you started!
+                    </h2>
+                    <p className="text-[#737373] leading-[1.5rem] text-center">
+                      Use the “Add new link” button to get started. Once you
+                      have more than one link, you can reorder and edit them.
+                      We’re here to help you share your profiles with everyone!
+                    </p>
+                  </div>
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
         <div className="mt-auto pt-4 w-full">
           <hr className="border-gray-200" />
