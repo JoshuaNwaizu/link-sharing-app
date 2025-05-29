@@ -20,7 +20,6 @@ const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { links, status } = useSelector((state: RootState) => state.link);
-
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     if (result.source.index === result.destination.index) return;

@@ -43,13 +43,16 @@ const profileSlice = createSlice({
         Omit<ProfileState, 'loading' | 'error' | 'success'>
       >,
     ) => {
-      const { firstName, lastName, email, imageUrl } = action.payload;
+      const { id, firstName, lastName, email, imageUrl, isEmailDisabled } =
+        action.payload;
+      state.id = id ?? state.id; // ✅ assign id
       state.firstName = firstName;
       state.lastName = lastName;
       state.email = email;
       state.imageUrl = imageUrl;
-      state.isEmailDisabled = true;
+      state.isEmailDisabled = isEmailDisabled;
     },
+
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -203,6 +206,7 @@ export const updateProfile = createAsyncThunk(
 
       dispatch(
         setProfileData({
+          id: data._id, // ✅ include this
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
@@ -263,6 +267,7 @@ export const saveOrUpdateProfile = createAsyncThunk(
 
       dispatch(
         setProfileData({
+          id: data._id, // ✅ include this
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,

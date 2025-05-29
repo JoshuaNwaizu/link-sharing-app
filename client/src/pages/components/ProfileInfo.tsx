@@ -8,6 +8,7 @@ import { platformColors } from './PhoneLink';
 import cleanUrl from '../../utils/cleanUrl';
 import ProfileInfoSkeleton from './ProfileInfoSkeleton';
 import ErrorCard from './ErrorCard';
+import { selectUserEmail } from '../../utils/dataSlice';
 
 const ProfileInfo = () => {
   const dispatch = useAppDispatch();
@@ -16,14 +17,22 @@ const ProfileInfo = () => {
     status,
     error: linkError,
   } = useSelector((state: RootState) => state.link);
-  const { firstName, lastName, email, imageUrl, error } = useSelector(
+  const { firstName, lastName, imageUrl, error } = useSelector(
     (state: RootState) => state.profile,
   );
+  const email = useSelector(selectUserEmail);
+
   const data = useSelector((state: RootState) => state.data.data);
   const [dataError, setDataError] = useState<boolean>(false);
   const handleRetry = () => {
-    dispatch(fetchProfileById(data._id));
-    dispatch(fetchLinks());
+    if (data?.userId) {
+      // Add null check for userId
+      dispatch(fetchProfileById(data.userId));
+      dispatch(fetchLinks());
+    } else {
+      console.error('No user ID available for retry');
+      setDataError(true);
+    }
   };
   const getPlatformColor = (platform: string): string => {
     // Normalize: remove dashes, dots, spaces, and lowercase

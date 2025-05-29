@@ -156,7 +156,7 @@ const LinkCard = ({
           <img
             src="/images/icon-drag-and-drop.svg"
             alt="drag and drop"
-            className="w-[.75rem] bg-red-300"
+            className="w-[.75rem] "
             {...(dragHandleProps || {})}
           />
           <h1 className="text-[1rem] font-bold tex-[#737373]">Link #{id}</h1>
@@ -233,16 +233,18 @@ const LinkCard = ({
               alt="link"
               className="w-[1rem]"
             />
-            <span className="text-[#737373] text-sm select-none">
-              {platformPrefixes[platformTitle]}
+            <span className="flex items-center">
+              <span className="text-[#737373]  select-none">
+                {platformPrefixes[platformTitle]}
+              </span>
+              <input
+                type="text"
+                value={userInput}
+                placeholder="e.g. johnappleseed"
+                className="outline-none border-none  text-[#737373] bg-white w-full"
+                onChange={handleUrlChange}
+              />
             </span>
-            <input
-              type="text"
-              value={userInput}
-              placeholder="e.g. johnappleseed"
-              className="outline-none border-none bg-white w-full"
-              onChange={handleUrlChange}
-            />
           </span>
           {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>

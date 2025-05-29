@@ -11,8 +11,8 @@ const Nav = () => {
     navigate('/auth/login'); // Redirect to login page
   };
   return (
-    <header className="fixed  right-0 left-0 top-0 flex z-20 justify-center bg-white">
-      <nav className="flex justify-between items-center w-[20.4375rem] md:w-[40.0625rem] lg:w-[80rem]  py-4 ">
+    <header className="w-full fixed mx-auto right-0 bg-white z-20">
+      <nav className="flex  px-[1rem] justify-between items-center mx-auto md:w-[40.0625rem] lg:w-[80rem]  py-4 ">
         <img
           src="/images/logo-devlinks-small.svg"
           alt="logo"

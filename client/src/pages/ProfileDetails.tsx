@@ -17,11 +17,12 @@ const ProfileDetails = () => {
   const dispatch = useAppDispatch();
   const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
     useSelector((state: RootState) => state.profile);
+  const userData = useSelector((state: RootState) => state.data.data);
 
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isFormValid = () => {
-    return Boolean(firstName?.trim() && lastName?.trim() && email?.trim());
+    return Boolean(firstName?.trim() || lastName?.trim() || email?.trim());
   };
   // Fetch profile on component mount
   useEffect(() => {
@@ -71,15 +72,22 @@ const ProfileDetails = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append('firstName', firstName || '');
-    formDataToSend.append('lastName', lastName || '');
-    formDataToSend.append('email', email || '');
+    // const formDataToSend = new FormData();
+    // formDataToSend.append('firstName', firstName || '');
+    // formDataToSend.append('lastName', lastName || '');
+    // formDataToSend.append('email', email || '');
 
+    // if (fileInputRef.current?.files?.[0]) {
+    //   formDataToSend.append('image', fileInputRef.current.files[0]);
+    // }
+    const formDataToSend = new FormData();
+    if (firstName) formDataToSend.append('firstName', firstName);
+    if (lastName) formDataToSend.append('lastName', lastName);
+    if (email) formDataToSend.append('email', email);
     if (fileInputRef.current?.files?.[0]) {
       formDataToSend.append('image', fileInputRef.current.files[0]);
     }
-
+    await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
     try {
       // await dispatch(updateProfile(formDataToSend)).unwrap();
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
@@ -121,6 +129,7 @@ const ProfileDetails = () => {
         <ProfileForms
           formData={{ firstName, lastName, email, isEmailDisabled }}
           onInputChange={handleInputChange}
+          userEmail={userData?.email}
         />
 
         <div className="mt-auto pt-4 w-full">

@@ -100,11 +100,10 @@ const Signup = () => {
           },
         }),
       ).unwrap();
+      console.log('Signup response:', response);
       navigate('/auth/login');
       if (response.token) {
-        localStorage.setItem('token', response.token);
         toast.success('Account created successfully!');
-        console.log('Token stored in localStorage', response.token);
       }
     } catch (err: any) {
       console.error('Error creating account:', err);

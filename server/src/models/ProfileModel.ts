@@ -43,9 +43,15 @@ const profileSchema = new Schema<IProfile>(
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: false,
       unique: true,
-      validate: validator.isEmail,
+
+      validate: {
+        validator: function (v: string) {
+          return !v || validator.isEmail(v); // Allow empty or valid email
+        },
+        message: 'Invalid email format',
+      },
     },
   },
   {

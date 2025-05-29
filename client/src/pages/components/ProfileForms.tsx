@@ -1,3 +1,8 @@
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { fetchUser, selectUserEmail } from '../../utils/dataSlice';
+import { RootState, useAppDispatch } from '../../store';
+
 interface ProfileFormsProps {
   formData: {
     firstName: string;
@@ -6,11 +11,50 @@ interface ProfileFormsProps {
     isEmailDisabled: boolean;
   };
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  userEmail?: string;
 }
 const ProfileForms: React.FC<ProfileFormsProps> = ({
   formData,
   onInputChange,
+  // userEmail,
 }) => {
+  const dispatch = useAppDispatch();
+  const userData = useSelector((state: RootState) => state.data.data);
+  const email = useSelector(selectUserEmail);
+  const userId = userData?.userId;
+
+  console.log('the userId is:', userId);
+  console.log('the email is:', email);
+
+  // useEffect(() => {
+  //   if (userId) {
+  //     console.log('Fetching user with ID:', userId);
+  //     dispatch(fetchUser(userId))
+  //       .unwrap()
+  //       .then((user) => {
+  //         console.log('Fetched user:', user);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Failed to fetch user:', error);
+  //       });
+  //   }
+  // }, [userId, dispatch]);
+
+  useEffect(() => {
+    // Load user data if not present in Redux state
+    if (!email && userId) {
+      console.log('Fetching user with ID:', userId);
+      dispatch(fetchUser(userId))
+        .unwrap()
+        .then((user) => {
+          console.log('Fetched user:', user);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch user:', error);
+        });
+    }
+  }, [userId, email, dispatch]);
+  const displayEmail = email || userData?.email || '';
   return (
     <div className="flex flex-col gap-3 p-[1.2rem] bg-[#FAFAFA]">
       <div className="xl:flex xl:items-center  xl:justify-between">
@@ -73,10 +117,9 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
             placeholder="e.g email@example.com"
             name="email"
             id="email"
-            value={formData.email}
+            value={displayEmail}
             onChange={onInputChange}
             disabled={formData.isEmailDisabled}
-            required
           />
         </div>
       </div>

@@ -51,9 +51,10 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       const token = signToken(user._id.toString());
       res.status(201).json({
         message: 'Register data recieved successfully',
-        email,
+        email: user.email,
         password,
-        user,
+        userId: user._id,
+
         token,
       });
       console.log(
@@ -119,6 +120,26 @@ const login = catchAsync(async (req: Request, res: Response) => {
       messageBody: error instanceof Error ? error.message : error,
     });
     return;
+  }
+});
+export const getUserById = catchAsync(async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    console.log('Fetching user with ID:', id);
+
+    const user = await User.findById(id).select('-password');
+
+    if (!user) {
+      console.log('No user found with ID:', id);
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    console.log('Found user:', user.email);
+    res.json({ user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Error fetching user' });
   }
 });
 export const isAuthenticated = () => {

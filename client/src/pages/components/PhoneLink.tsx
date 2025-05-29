@@ -6,6 +6,7 @@ import { fetchLinks } from '../../utils/linkSlice';
 import { API } from '../../App';
 import { fetchProfileById } from '../../utils/profileSlice';
 import { motion } from 'framer-motion';
+import { selectUserEmail } from '../../utils/dataSlice';
 
 export const platformColors = {
   github: '#1A1A1A',
@@ -30,9 +31,10 @@ const PhoneLink = () => {
     email: '',
     imageUrl: '',
   });
-  const { firstName, lastName, email, imageUrl } = useSelector(
+  const { firstName, lastName, imageUrl } = useSelector(
     (state: RootState) => state.profile,
   );
+  const email = useSelector(selectUserEmail);
 
   // const profileState = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>();

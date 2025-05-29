@@ -8,6 +8,7 @@ import ProfileCard from './pages/ProfileCard';
 import ProfileLayout from './layouts/profileLayout/ProfileLayout';
 // import HomeContainer from './pages/components/HomeContainer';
 import Home from './pages/Home';
+import PublicProfile from './pages/PublicProfile';
 
 export const API = import.meta.env.VITE_BASE_URL as string;
 
@@ -31,8 +32,12 @@ const router = createBrowserRouter([
   {
     element: <ProfileLayout />,
     path: '/profile',
-    children: [{ path: 'profile-info', element: <ProfileCard /> }],
+    children: [
+      { path: 'profile-info', element: <ProfileCard /> },
+      // { path: '/profile/:id', element: <PublicProfile /> },
+    ],
   },
+  { element: <PublicProfile />, path: '/profile/:id' },
 ]);
 const App = () => {
   return <RouterProvider router={router} />;
