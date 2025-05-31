@@ -83,29 +83,6 @@ const LinkCard = ({
     setUserInput(userPart || '');
   }, [platformTitle, url]);
 
-  // const handlePlatformSelect = (item: string, index: number) => {
-  //   if (item === platformTitle) {
-  //     setIsDropDown(false);
-  //     dispatch(toggleOptionTitle('')); // Close the dropdown in Redux too
-  //     return;
-  //   }
-  //   setPlatformTitle(item);
-  //   setIsDropDown(false);
-  //   setError('');
-
-  //   const prefix = platformPrefixes[item] || '';
-  //   setUserInput('');
-  //   dispatch(setPlatform(item));
-  //   dispatch(updateLinkPlatform({ index, platform: item }));
-  //   dispatch(toggleOptionTitle(id));
-  //   dispatch(
-  //     updateLink({
-  //       id,
-  //       url: prefix,
-  //       platform: item,
-  //     }),
-  //   );
-  // };
   const handlePlatformSelect = (item: string) => {
     if (item === platformTitle) {
       setIsDropDown(false);
@@ -206,7 +183,7 @@ const LinkCard = ({
               <span className="capitalize">{platformTitle}</span>
             </p>
             <div
-              className={`flex flex-col xl:h-[17rem] absolute xl:overflow-scroll  ${isOpen ? 'flex' : 'hidden'}  top-13 gap-2 z-10 left-0 xl:w-full bg-white shadow-2xl w-[17rem] rounded-[.5rem] p-5`}
+              className={`flex flex-col h-[17rem] absolute overflow-scroll ${isOpen ? 'flex' : 'hidden'} top-13 gap-2 z-10 left-0 w-[17rem] bg-white shadow-2xl rounded-[.5rem] p-5`}
             >
               {platformNames.map((name, index) => (
                 <p
