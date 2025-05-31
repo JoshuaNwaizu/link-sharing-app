@@ -129,13 +129,23 @@ const linkSlice = createSlice({
     setPlatform: (state, action: PayloadAction<string>) => {
       state.selectedPlatform = action.payload;
     },
+    // updateLinkPlatform: (
+    //   state,
+    //   action: PayloadAction<{ index: number; platform: string }>,
+    // ) => {
+    //   const { index, platform } = action.payload;
+    //   if (state.links[index]) {
+    //     state.links[index].platform = platform;
+    //   }
+    // },
     updateLinkPlatform: (
       state,
-      action: PayloadAction<{ index: number; platform: string }>,
+      action: PayloadAction<{ id: string; platform: string }>,
     ) => {
-      const { index, platform } = action.payload;
-      if (state.links[index]) {
-        state.links[index].platform = platform;
+      const { id, platform } = action.payload;
+      const link = state.links.find((link) => link.id === id);
+      if (link) {
+        link.platform = platform;
       }
     },
   },

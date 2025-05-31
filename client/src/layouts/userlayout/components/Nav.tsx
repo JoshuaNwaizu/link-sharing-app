@@ -12,7 +12,7 @@ const Nav = () => {
   };
   return (
     <header className="w-full fixed mx-auto right-0 bg-white z-20">
-      <nav className="flex  px-[1rem] justify-between items-center mx-auto md:w-[40.0625rem] lg:w-[80rem]  py-4 ">
+      <nav className="flex  px-[1.5rem] justify-between items-center mx-auto md:w-[40.0625rem] lg:w-[80rem]  py-4 ">
         <img
           src="/images/logo-devlinks-small.svg"
           alt="logo"

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import {
   removeLink,
-  setPlatform,
   toggleOptionTitle,
   updateLink,
   updateLinkPlatform,
@@ -84,7 +83,30 @@ const LinkCard = ({
     setUserInput(userPart || '');
   }, [platformTitle, url]);
 
-  const handlePlatformSelect = (item: string, index: number) => {
+  // const handlePlatformSelect = (item: string, index: number) => {
+  //   if (item === platformTitle) {
+  //     setIsDropDown(false);
+  //     dispatch(toggleOptionTitle('')); // Close the dropdown in Redux too
+  //     return;
+  //   }
+  //   setPlatformTitle(item);
+  //   setIsDropDown(false);
+  //   setError('');
+
+  //   const prefix = platformPrefixes[item] || '';
+  //   setUserInput('');
+  //   dispatch(setPlatform(item));
+  //   dispatch(updateLinkPlatform({ index, platform: item }));
+  //   dispatch(toggleOptionTitle(id));
+  //   dispatch(
+  //     updateLink({
+  //       id,
+  //       url: prefix,
+  //       platform: item,
+  //     }),
+  //   );
+  // };
+  const handlePlatformSelect = (item: string) => {
     if (item === platformTitle) {
       setIsDropDown(false);
       dispatch(toggleOptionTitle('')); // Close the dropdown in Redux too
@@ -96,8 +118,8 @@ const LinkCard = ({
 
     const prefix = platformPrefixes[item] || '';
     setUserInput('');
-    dispatch(setPlatform(item));
-    dispatch(updateLinkPlatform({ index, platform: item }));
+    // Remove this: dispatch(setPlatform(item));
+    dispatch(updateLinkPlatform({ id, platform: item })); // Use id, not index!
     dispatch(toggleOptionTitle(id));
     dispatch(
       updateLink({
@@ -107,7 +129,6 @@ const LinkCard = ({
       }),
     );
   };
-
   const handleToggleOption = () => {
     if (toggleOption === id) {
       // Already open, so close it
@@ -190,7 +211,7 @@ const LinkCard = ({
               {platformNames.map((name, index) => (
                 <p
                   key={index}
-                  onClick={() => handlePlatformSelect(name, index)}
+                  onClick={() => handlePlatformSelect(name)}
                   className={`flex items-center cursor-pointer gap-3 ${
                     platformTitle === name
                       ? 'text-[#333] font-bold'

@@ -21,29 +21,14 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
   const dispatch = useAppDispatch();
   const userData = useSelector((state: RootState) => state.data.data);
   const email = useSelector(selectUserEmail);
+
   const userId = userData?.userId;
 
   console.log('the userId is:', userId);
   console.log('the email is:', email);
 
-  // useEffect(() => {
-  //   if (userId) {
-  //     console.log('Fetching user with ID:', userId);
-  //     dispatch(fetchUser(userId))
-  //       .unwrap()
-  //       .then((user) => {
-  //         console.log('Fetched user:', user);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Failed to fetch user:', error);
-  //       });
-  //   }
-  // }, [userId, dispatch]);
-
   useEffect(() => {
-    // Load user data if not present in Redux state
     if (!email && userId) {
-      console.log('Fetching user with ID:', userId);
       dispatch(fetchUser(userId))
         .unwrap()
         .then((user) => {
@@ -53,7 +38,8 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
           console.error('Failed to fetch user:', error);
         });
     }
-  }, [userId, email, dispatch]);
+  }, [email, userId, dispatch]);
+
   const displayEmail = email || userData?.email || '';
   return (
     <div className="flex flex-col gap-3 p-[1.2rem] bg-[#FAFAFA]">
