@@ -123,15 +123,7 @@ const linkSlice = createSlice({
     setPlatform: (state, action: PayloadAction<string>) => {
       state.selectedPlatform = action.payload;
     },
-    // updateLinkPlatform: (
-    //   state,
-    //   action: PayloadAction<{ index: number; platform: string }>,
-    // ) => {
-    //   const { index, platform } = action.payload;
-    //   if (state.links[index]) {
-    //     state.links[index].platform = platform;
-    //   }
-    // },
+
     updateLinkPlatform: (
       state,
       action: PayloadAction<{ id: string; platform: string }>,
@@ -151,9 +143,9 @@ const linkSlice = createSlice({
       })
       .addCase(fetchLinks.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.links = action.payload.map((link: Link, index: number) => ({
+        state.links = action.payload.map((link: Link) => ({
           ...link,
-          id: index + 1, // Sequential IDs starting from 1
+          // Sequential IDs starting from 1
         }));
         state.error = null;
       })

@@ -119,7 +119,7 @@ const ProfileDetails = () => {
       <section className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] lg:h-[52.125rem] xl:mt-0 xl:w-[50.5rem] w-full">
         <div className="flex flex-col gap-3">
           <h1 className="text-[1.5rem] font-bold leading-[2.25rem]">
-            Profile Details
+            Profile Detailsss
           </h1>
           <p className="text-[#737373] leading-[1.5rem]">
             Add your details to create a personal touch to your profile.
