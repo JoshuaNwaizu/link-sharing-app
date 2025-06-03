@@ -188,9 +188,7 @@ export const updateProfile = createAsyncThunk(
 
       const response = await fetch(`${API}/me`, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
         body: formData,
       });
 
