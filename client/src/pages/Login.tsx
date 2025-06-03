@@ -83,7 +83,6 @@ const Login = () => {
         }),
       ).unwrap();
       if (response.token) {
-        localStorage.setItem('token', response.token);
         toast.success('Login successful!');
         console.log('Token stored in localStorage');
       }

@@ -119,12 +119,11 @@ export const fetchProfileById =
     dispatch(setError(null));
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
       const response = await fetch(`${API}/profile/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include', // <-- Add this!
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) throw new Error('Failed to fetch profile');
@@ -150,13 +149,11 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
       const response = await fetch(`${API}/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include', // <-- Use cookies!
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.status === 404) {
@@ -233,12 +230,12 @@ export const saveOrUpdateProfile = createAsyncThunk(
   'profile/saveOrUpdateProfile',
   async (formData: FormData, { dispatch, rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
-
       // First check if profile exists
       const checkResponse = await fetch(`${API}/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include', // <-- This is required!
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       let response;
@@ -246,14 +243,16 @@ export const saveOrUpdateProfile = createAsyncThunk(
         // No profile exists, create new one
         response = await fetch(`${API}/profiles`, {
           method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include', // <-- This is required!
+
           body: formData,
         });
       } else {
         // Profile exists, update it
         response = await fetch(`${API}/me`, {
           method: 'PUT',
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include', // <-- This is required!
+
           body: formData,
         });
       }
@@ -303,15 +302,13 @@ export const saveProfile =
     dispatch(setSuccess(false));
 
     try {
-      const token = localStorage.getItem('token');
-      console.log(token);
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
       const response = await fetch(`${API}/profiles`, {
         method: 'POST',
         body: formData,
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include', // <-- Send cookies!
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) throw new Error('Failed to save profile');

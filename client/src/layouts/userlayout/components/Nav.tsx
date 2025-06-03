@@ -5,11 +5,13 @@ import { toast } from 'react-toastify';
 
 const Nav = () => {
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove token from storage
+    localStorage.clear(); // Clear all localStorage data
     toast.success('Logged out successfully');
     navigate('/auth/login'); // Redirect to login page
   };
+
   return (
     <header className="w-full fixed mx-auto right-0 bg-white z-20">
       <nav className="flex  px-[1.5rem] justify-between items-center mx-auto md:w-[40.0625rem] lg:w-[80rem]  py-4 ">

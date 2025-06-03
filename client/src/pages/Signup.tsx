@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from '../store';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import Loader from './components/Loader';
@@ -107,10 +107,13 @@ const Signup = () => {
       }
     } catch (err: any) {
       console.error('Error creating account:', err);
-      if (err.message.includes('Email already in use')) {
-        toast.error('Email is already registered');
+      console.error(err.message);
+      const status = err?.status || err?.response?.status || err?.code;
+      console.error('Error status:', status);
+      if (status === 404) {
+        toast.error('Email is already in use');
       } else {
-        toast.error('Failed to create account. Please try again.');
+        toast.error('Error creating account');
       }
     }
   };
@@ -118,6 +121,7 @@ const Signup = () => {
   return (
     <>
       {loading && <Loader />}
+
       <div className="flex flex-col  gap-8 md:bg-white md:w-[29.75rem]  md:p-[2.5rem]  md:transform md:scale-90 md:origin-center md:rounded-[0.75rem]">
         <div className="flex flex-col gap-2">
           <h1 className="text-[#333] text-[1.5rem] font-bold leading-[2.25rem]">
@@ -192,18 +196,6 @@ const Signup = () => {
             <p className="cursor-pointer text-[#633CFF]">Login</p>
           </Link>
         </div>
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={true}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </div>
     </>
   );

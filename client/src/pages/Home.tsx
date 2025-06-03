@@ -27,23 +27,26 @@ const Home = () => {
     const reorderedLinks = Array.from(links);
     const [removed] = reorderedLinks.splice(result.source.index, 1);
     reorderedLinks.splice(result.destination.index, 0, removed);
-
-    dispatch({ type: 'link/reorderLinks', payload: reorderedLinks });
+    const linksWithOrder = reorderedLinks.map((link, idx) => ({
+      ...link,
+      index: idx, // or 'order' if your backend expects that
+    }));
+    dispatch({ type: 'link/reorderLinks', payload: linksWithOrder });
   };
   const fetchUserLinks = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/auth/signup');
-      return;
-    }
-
     try {
       await dispatch(fetchLinks()).unwrap();
     } catch (error: any) {
       console.error('Failed to fetch links:', error);
-      if (error.message === 'Unauthorized') {
+      if (
+        error?.status === 401 ||
+        error?.response?.status === 401 ||
+        error?.message?.toLowerCase().includes('unauthorized')
+      ) {
         localStorage.removeItem('token');
         navigate('/auth/signup');
+      } else {
+        console.error('Failed to fetch links:', error);
       }
     }
   }, [dispatch, navigate]);
@@ -101,6 +104,7 @@ const Home = () => {
                             id={link.id}
                             url={link.url}
                             platform={link.platform}
+                            index={index}
                             dragHandleProps={
                               provided.dragHandleProps ?? undefined
                             }

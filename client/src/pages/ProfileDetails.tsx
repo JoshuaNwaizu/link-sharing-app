@@ -12,9 +12,14 @@ import {
 import { Profile } from '../utils/cleanUrl';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from './components/Loader';
+import { useNavigate } from 'react-router';
 
 const ProfileDetails = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  // const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
+  //   useSelector((state: RootState) => state.profile);
   const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
     useSelector((state: RootState) => state.profile);
   const userData = useSelector((state: RootState) => state.data.data);
@@ -44,7 +49,6 @@ const ProfileDetails = () => {
       })
       .catch((error) => console.error('Failed to fetch profile:', error));
   }, [dispatch]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(
@@ -72,14 +76,6 @@ const ProfileDetails = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // const formDataToSend = new FormData();
-    // formDataToSend.append('firstName', firstName || '');
-    // formDataToSend.append('lastName', lastName || '');
-    // formDataToSend.append('email', email || '');
-
-    // if (fileInputRef.current?.files?.[0]) {
-    //   formDataToSend.append('image', fileInputRef.current.files[0]);
-    // }
     const formDataToSend = new FormData();
     if (firstName) formDataToSend.append('firstName', firstName);
     if (lastName) formDataToSend.append('lastName', lastName);
@@ -95,9 +91,19 @@ const ProfileDetails = () => {
         position: 'top-right',
         autoClose: 3000,
         hideProgressBar: true,
-      }); // Fetch updated profile data after successful updat
+      });
       await dispatch(fetchProfile());
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error?.status === 401 ||
+        error?.response?.status === 401 ||
+        (typeof error?.message === 'string' &&
+          error.message.toLowerCase().includes('unauthorized'))
+      ) {
+        // Redirect to signup
+        navigate('/auth/signup');
+        return;
+      }
       console.error('Error saving profile:', error);
       toast.error('Failed to update profile. Please try again.', {
         position: 'top-right',

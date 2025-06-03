@@ -6,9 +6,10 @@ import HomeLayout from './layouts/userlayout/HomeLayout';
 import ProfileDetails from './pages/ProfileDetails';
 import ProfileCard from './pages/ProfileCard';
 import ProfileLayout from './layouts/profileLayout/ProfileLayout';
-// import HomeContainer from './pages/components/HomeContainer';
+import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
 import PublicProfile from './pages/PublicProfile';
+import { ToastContainer } from 'react-toastify';
 
 export const API = import.meta.env.VITE_BASE_URL as string;
 
@@ -40,7 +41,23 @@ const router = createBrowserRouter([
   { element: <PublicProfile />, path: '/profile/:id' },
 ]);
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <RouterProvider router={router} />
+    </>
+  );
 };
 
 export default App;

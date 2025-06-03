@@ -63,11 +63,13 @@ const LinkCard = ({
   url = '',
   platform = 'github',
   dragHandleProps,
+  index,
 }: {
   id: string;
   url?: string;
   platform?: string;
   dragHandleProps?: React.HTMLAttributes<HTMLImageElement>;
+  index: number;
 }) => {
   const [platformTitle, setPlatformTitle] = useState<string>(platform);
   const [isDropDown, setIsDropDown] = useState<boolean>(false);
@@ -157,7 +159,9 @@ const LinkCard = ({
             className="w-[.75rem] "
             {...(dragHandleProps || {})}
           />
-          <h1 className="text-[1rem] font-bold tex-[#737373]">Link #{id}</h1>
+          <h1 className="text-[1rem] font-bold tex-[#737373]">
+            Link #{index + 1}
+          </h1>
         </span>
         <p
           className="text-[#737373] cursor-pointer"

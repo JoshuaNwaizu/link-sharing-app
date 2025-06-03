@@ -27,14 +27,10 @@ export const fetchLinks = createAsyncThunk(
   'link/fetchLinks',
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
       const response = await fetch(`${API}/get-links`, {
+        credentials: 'include', // <-- Add this!
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -61,21 +57,19 @@ export const saveLinks = createAsyncThunk(
   'link/saveLinks',
   async (_, { getState }) => {
     const { links } = (getState() as RootState).link;
-    const token = localStorage.getItem('token');
+
     const linksToSave = links.filter((link) => link.url.trim() !== '');
 
     if (linksToSave.length === 0) {
       throw new Error('Please add at least one URL before saving');
     }
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
+
     const response = await fetch(`${API}/save-links`, {
       method: 'POST',
 
+      credentials: 'include', // <-- Add this!
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ links: linksToSave }),
     });
