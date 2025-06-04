@@ -43,7 +43,6 @@ const Home = () => {
         error?.response?.status === 401 ||
         error?.message?.toLowerCase().includes('unauthorized')
       ) {
-        localStorage.removeItem('token');
         navigate('/auth/signup');
       } else {
         console.error('Failed to fetch links:', error);
@@ -60,7 +59,7 @@ const Home = () => {
   const handleSave = async () => {
     try {
       await dispatch(saveLinks()).unwrap();
-      // Refetch links after successful save
+      // Refetching links after successful save
       await dispatch(fetchLinks()).unwrap();
       toast.success('Links saved successfully!');
     } catch (error) {
