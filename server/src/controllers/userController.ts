@@ -107,6 +107,9 @@ const login = catchAsync(async (req: Request, res: Response) => {
     const token = signToken(user._id.toString());
     res.cookie('token', token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // true in prod
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
+      // domain: '.yourdomain.com', // optional, only if needed
     });
     res.json({
       message: 'Form data recieved successfully',
@@ -122,6 +125,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
     return;
   }
 });
+
 export const getUserById = catchAsync(async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
