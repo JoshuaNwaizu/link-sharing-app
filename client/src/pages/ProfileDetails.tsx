@@ -10,7 +10,7 @@ import {
   setProfileData,
 } from '../utils/profileSlice';
 import { Profile } from '../utils/cleanUrl';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Loader from './components/Loader';
 import { useNavigate } from 'react-router';
 
@@ -88,7 +88,6 @@ const ProfileDetails = () => {
       // await dispatch(updateProfile(formDataToSend)).unwrap();
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
       toast.success('Profile updated successfully!', {
-        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: true,
       });
@@ -106,7 +105,6 @@ const ProfileDetails = () => {
       }
       console.error('Error saving profile:', error);
       toast.error('Failed to update profile. Please try again.', {
-        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: true,
       });
@@ -119,7 +117,7 @@ const ProfileDetails = () => {
       <section className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] lg:h-[52.125rem] xl:mt-0 xl:w-[50.5rem] w-full">
         <div className="flex flex-col gap-3">
           <h1 className="text-[1.5rem] font-bold leading-[2.25rem]">
-            Profile Detailzz
+            Profile Details
           </h1>
           <p className="text-[#737373] leading-[1.5rem]">
             Add your details to create a personal touch to your profile.
@@ -152,10 +150,6 @@ const ProfileDetails = () => {
             />
           </div>
         </div>
-        <ToastContainer
-          position="top-right"
-          theme="light"
-        />
       </section>
     </>
   );

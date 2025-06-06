@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import Button from './Button';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store';
 import { useEffect } from 'react';
@@ -15,6 +15,9 @@ const ProfileCardNav = () => {
     dispatch(fetchProfile())
       .unwrap()
       .then((result) => {
+        if (result?.id) {
+          localStorage.setItem('profileId', result.id);
+        }
         console.log('Profile fetched successfully:', result);
       })
       .catch((error) => {
@@ -23,36 +26,25 @@ const ProfileCardNav = () => {
   }, [dispatch]);
 
   const handleShareLink = async () => {
-    console.log('Current profile state:', profile);
+    let profileId: string | undefined = profile.id;
+    if (!profileId) {
+      const storedId = localStorage.getItem('profileId');
+      profileId = storedId !== null ? storedId : undefined;
+    }
 
-    if (!profile.id) {
-      console.warn('No profile ID found');
+    if (!profileId) {
       toast.error('Profile not found. Please complete your profile first.');
       return;
     }
 
     try {
-      const profileUrl = `${window.location.origin}/profile/${profile.id}`;
-      console.log('Attempting to copy URL:', profileUrl);
-
+      const profileUrl = `${window.location.origin}/profile/${profileId}`;
       await navigator.clipboard.writeText(profileUrl);
-
-      console.log('URL copied successfully');
-      toast.success('Link copied to clipboard!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      toast.success('Link copied to clipboard!');
     } catch (error) {
-      console.error('Failed to copy link:', error);
-      toast.error('Failed to copy link. Please try again.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: true,
-      });
+      toast.error('Failed to copy link. Please try again.');
     }
   };
-
   return (
     <nav className="md:bg-[#633CFF] md:rounded-b-[2rem] md:h-[22rem] md:w-[48rem] w-full xl:w-[84rem]">
       <div className="max-w-[79.75rem] xl:w-[79.75rem] md:w-[42.75rem] w-full mx-auto">
@@ -72,7 +64,7 @@ const ProfileCardNav = () => {
           {/* </Link> */}
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
     </nav>
   );
 };
