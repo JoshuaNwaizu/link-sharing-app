@@ -82,5 +82,6 @@ const getLinks = catchAsync(async (req: Request, res: Response) => {
     return;
   }
 });
+// server/src/controllers/linkController.ts
 
 export { saveLinks, getLinks };

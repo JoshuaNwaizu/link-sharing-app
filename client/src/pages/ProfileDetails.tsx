@@ -10,7 +10,7 @@ import {
   setProfileData,
 } from '../utils/profileSlice';
 import { Profile } from '../utils/cleanUrl';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Loader from './components/Loader';
 import { useNavigate } from 'react-router';
 
@@ -151,6 +151,7 @@ const ProfileDetails = () => {
           </div>
         </div>
       </section>
+      <ToastContainer position="top-center" />
     </>
   );
 };

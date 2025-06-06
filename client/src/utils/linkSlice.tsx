@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { API } from '../App';
 import { RootState } from '../store';
 
-interface Link {
+export interface Link {
   id: string;
   url: string;
   platform: string;
@@ -53,6 +53,7 @@ export const fetchLinks = createAsyncThunk(
     }
   },
 );
+
 export const saveLinks = createAsyncThunk(
   'link/saveLinks',
   async (_, { getState }) => {
