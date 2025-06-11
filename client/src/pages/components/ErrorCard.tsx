@@ -5,14 +5,7 @@ interface ErrorCardProps {
 
 const ErrorCard = ({ message, retry }: ErrorCardProps) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-md">
-      <div className="mb-4">
-        <img
-          src="/images/icon-error.svg"
-          alt="Error"
-          className="w-16 h-16 text-red-500"
-        />
-      </div>
+    <div className="flex flex-col h-svh items-center justify-center p-8 bg-white rounded-lg shadow-md">
       <h2 className="mb-2 text-xl font-semibold text-gray-800">
         Something went wrong
       </h2>

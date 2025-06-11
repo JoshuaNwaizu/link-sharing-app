@@ -10,10 +10,8 @@ import { protectedRoute } from '../controllers/userController';
 
 const router = express.Router();
 router.route('/profile/:id').get(getProfileById);
-router.use(protectedRoute);
-
-router.post('/profiles', upload.single('image'), createProfile);
-router.get('/me', getMyProfile);
-router.put('/me', upload.single('image'), updateProfile);
+router.post('/profiles', upload.single('image'), protectedRoute, createProfile);
+router.get('/me', protectedRoute, getMyProfile);
+router.put('/me', upload.single('image'), protectedRoute, updateProfile);
 
 export default router;

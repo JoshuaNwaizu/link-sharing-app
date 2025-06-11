@@ -54,6 +54,70 @@ export const fetchLinks = createAsyncThunk(
   },
 );
 
+export const fetchOflineLinks = createAsyncThunk(
+  'link/fetchOflineLinks',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API}/shared-links/${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch links');
+      }
+
+      const data = await response.json();
+      console.log('Received links data:', data);
+
+      return data.data.links.map((link: any) => ({
+        id: link._id || String(Math.random()),
+        url: link.url,
+        platform: link.platform,
+        isDropDown: false,
+      }));
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to fetch links',
+      );
+    }
+  },
+);
+// export const fetchOflineLinks = createAsyncThunk(
+//   'link/fetchOflineLinks',
+//   async (profileId: string, { rejectWithValue }) => {
+//     try {
+//       console.log('Fetching links for profileId:', profileId);
+
+//       const response = await fetch(`${API}/shared-links/${profileId}`);
+
+//       if (!response.ok) {
+//         const error = await response.json();
+//         throw new Error(error.message || 'Failed to fetch links');
+//       }
+
+//       const data = await response.json();
+//       console.log('Received links data:', data);
+
+//       if (!data.data?.links) {
+//         throw new Error('Invalid response format');
+//       }
+
+//       return data.data.links.map((link: any) => ({
+//         id: link._id || String(Math.random()),
+//         url: link.url,
+//         platform: link.platform,
+//         isDropDown: false,
+//       }));
+//     } catch (error) {
+//       console.error('Error in fetchOflineLinks:', error);
+//       return rejectWithValue(
+//         error instanceof Error ? error.message : 'Failed to fetch links',
+//       );
+//     }
+//   },
+// );
 export const saveLinks = createAsyncThunk(
   'link/saveLinks',
   async (_, { getState }) => {

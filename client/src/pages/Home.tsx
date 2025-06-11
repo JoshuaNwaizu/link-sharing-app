@@ -82,7 +82,7 @@ const Home = () => {
           <Droppable droppableId="links-droppable">
             {(provided) => (
               <div
-                className="flex-1 overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar"
+                className="flex-1 custom-scrollbar overflow-y-auto py-[4rem] shadow-container flex flex-col gap-7 min-h-0 custom-scrollbar"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >

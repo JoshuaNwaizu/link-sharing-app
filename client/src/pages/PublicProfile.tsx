@@ -8,7 +8,7 @@ import { API } from '../App';
 
 import { RootState, useAppDispatch } from '../store';
 import { useSelector } from 'react-redux';
-import { fetchLinks } from '../utils/linkSlice';
+import { fetchOflineLinks } from '../utils/linkSlice';
 
 interface ProfileData {
   _id: string;
@@ -51,23 +51,25 @@ const PublicProfile = () => {
       try {
         setLoading(true);
 
-        const res = await fetch(`${API}/profile/${id}`);
-
-        if (!res.ok) {
+        // First fetch profile
+        const profileRes = await fetch(`${API}/profile/${id}`);
+        if (!profileRes.ok) {
           throw new Error('Failed to fetch profile data');
         }
 
-        const data = await res.json();
-        console.log('Fetched profile data:', data);
+        const profileData = await profileRes.json();
+        console.log('Profile data:', profileData);
 
-        if (!data._id) {
+        if (!profileData._id) {
           throw new Error('Profile not found');
         }
 
-        setProfile(data);
-        await dispatch(fetchLinks()).unwrap();
+        setProfile(profileData);
+
+        // Pass the ID to fetchOflineLinks
+        await dispatch(fetchOflineLinks(id)).unwrap();
       } catch (err: any) {
-        console.error('Error fetching profile:', err);
+        console.error('Error:', err);
         setError(err.message || 'Failed to fetch profile');
       } finally {
         setLoading(false);

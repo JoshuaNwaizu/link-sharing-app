@@ -22,7 +22,11 @@
     transparent
   );
 }
-
+.custom-scrollbar {
+  isolation: isolate;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
 .shadow-container::before,
 .shadow-container::after {
   content: '';

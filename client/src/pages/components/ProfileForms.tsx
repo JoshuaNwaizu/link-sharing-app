@@ -50,7 +50,7 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
         >
           First Name *
         </label>
-        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center px-[1rem]">
+        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] items-center px-[1rem]">
           <input
             type="text"
             className="border-none outline-none xl:w-[27rem]"
@@ -70,7 +70,7 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
         >
           Last Name *
         </label>
-        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center px-[1rem]">
+        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] px-[1rem]">
           <input
             type="text"
             className="border-none outline-none xl:w-[27rem]"
@@ -95,7 +95,7 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
             formData.isEmailDisabled
               ? 'bg-[#F0F0F0] text-[#737373] cursor-not-allowed'
               : ''
-          } py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center px-[1rem]`}
+          } py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] items-center px-[1rem]`}
         >
           <input
             type="email"

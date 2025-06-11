@@ -8,6 +8,7 @@ import Button from './components/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import { useState } from 'react';
 import Loader from './components/Loader';
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -97,7 +98,12 @@ const Login = () => {
   return (
     <>
       {loading && <Loader />}
-      <div className="flex flex-col gap-8 md:bg-white md:w-[29.75rem]  md:p-[2.5rem]  md:transform md:scale-90 md:origin-center md:rounded-[0.75rem]">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex flex-col gap-8 md:bg-white md:w-[29.75rem]  md:p-[2.5rem]  md:transform md:scale-90 md:origin-center md:rounded-[0.75rem]"
+      >
         <div className="flex flex-col ">
           <h1 className="text-[#333] text-[1.5rem] font-bold leading-[2.25rem]">
             Login
@@ -167,7 +173,7 @@ const Login = () => {
           hideProgressBar={true}
           theme="light"
         />
-      </div>
+      </motion.div>
     </>
   );
 };

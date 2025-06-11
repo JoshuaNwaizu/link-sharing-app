@@ -12,6 +12,7 @@
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@reduxjs/toolkit": "^2.5.1",
+    "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.4",
     "framer-motion": "^12.12.2",
