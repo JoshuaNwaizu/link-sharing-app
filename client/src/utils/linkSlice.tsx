@@ -203,6 +203,7 @@ const linkSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      // Existing cases
       .addCase(fetchLinks.pending, (state) => {
         state.status = 'loading';
       })
@@ -210,7 +211,6 @@ const linkSlice = createSlice({
         state.status = 'idle';
         state.links = action.payload.map((link: Link) => ({
           ...link,
-          // Sequential IDs starting from 1
         }));
         state.error = null;
       })
@@ -218,6 +218,22 @@ const linkSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message ?? null;
       })
+      // Add these cases for fetchOflineLinks
+      .addCase(fetchOflineLinks.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(fetchOflineLinks.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.links = action.payload;
+        state.error = null;
+        console.log('Updated state with links:', state.links); // Debug log
+      })
+      .addCase(fetchOflineLinks.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message ?? null;
+      })
+      // Existing save links cases...
       .addCase(saveLinks.pending, (state) => {
         state.status = 'loading';
       })

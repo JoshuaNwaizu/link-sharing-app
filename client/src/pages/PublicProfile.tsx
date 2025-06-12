@@ -28,6 +28,8 @@ const PublicProfile = () => {
   const links = useSelector((state: RootState) => state.link.links);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const linkStatus = useSelector((state: RootState) => state.link.status);
+  const linkError = useSelector((state: RootState) => state.link.error);
 
   const getPlatformColor = (platform: string): string => {
     const normalized = platform.toLowerCase().replace(/[\s.-]/g, '');
@@ -40,37 +42,101 @@ const PublicProfile = () => {
     return color === '#FAFAFA' || color === '#FFFFFF';
   };
 
+  // useEffect(() => {
+  //   const fetchPublicProfile = async () => {
+  //     if (!id) {
+  //       setError('Profile ID is required');
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       setLoading(true);
+
+  //       // First fetch profile
+  //       const profileRes = await fetch(`${API}/profile/${id}`);
+  //       if (!profileRes.ok) {
+  //         throw new Error('Failed to fetch profile data');
+  //       }
+
+  //       const profileData = await profileRes.json();
+  //       console.log('Profile data:', profileData);
+
+  //       if (!profileData._id) {
+  //         throw new Error('Profile not found');
+  //       }
+
+  //       setProfile(profileData);
+
+  //       // Pass the ID to fetchOflineLinks
+  //       await dispatch(fetchOflineLinks(id)).unwrap();
+  //     } catch (err: any) {
+  //       console.error('Error:', err);
+  //       setError(err.message || 'Failed to fetch profile');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchPublicProfile();
+  // }, [id, dispatch]);
+  // useEffect(() => {
+  //   const fetchPublicProfile = async () => {
+  //     if (!id) return;
+
+  //     try {
+  //       setLoading(true);
+
+  //       const profileRes = await fetch(`${API}/profile/${id}`);
+  //       const profileData = await profileRes.json();
+  //       console.log('Profile data:', profileData);
+  //       console.log('Profile user ID:', profileData.user); // Add this line
+
+  //       setProfile(profileData);
+  //       await dispatch(fetchOflineLinks(profileData.user)).unwrap(); // Use profile.user instead of id
+  //     } catch (err) {
+  //       console.error('Error:', err);
+  //       setError(
+  //         err instanceof Error ? err.message : 'Failed to fetch profile',
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchPublicProfile();
+  // }, [id, dispatch]);
   useEffect(() => {
     const fetchPublicProfile = async () => {
-      if (!id) {
-        setError('Profile ID is required');
-        setLoading(false);
-        return;
-      }
+      if (!id) return;
 
       try {
         setLoading(true);
 
-        // First fetch profile
         const profileRes = await fetch(`${API}/profile/${id}`);
-        if (!profileRes.ok) {
-          throw new Error('Failed to fetch profile data');
-        }
-
         const profileData = await profileRes.json();
         console.log('Profile data:', profileData);
-
-        if (!profileData._id) {
-          throw new Error('Profile not found');
-        }
+        console.log('Profile user ID:', profileData.user);
 
         setProfile(profileData);
 
-        // Pass the ID to fetchOflineLinks
-        await dispatch(fetchOflineLinks(id)).unwrap();
-      } catch (err: any) {
+        // Add error handling for the dispatch
+        try {
+          const result = await dispatch(
+            fetchOflineLinks(profileData.user),
+          ).unwrap();
+          console.log('Fetched links result:', result);
+        } catch (err) {
+          console.error('Error fetching links:', err);
+          setError(
+            err instanceof Error ? err.message : 'Failed to fetch links',
+          );
+        }
+      } catch (err) {
         console.error('Error:', err);
-        setError(err.message || 'Failed to fetch profile');
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch profile',
+        );
       } finally {
         setLoading(false);
       }
@@ -78,10 +144,9 @@ const PublicProfile = () => {
 
     fetchPublicProfile();
   }, [id, dispatch]);
-
-  if (loading) return <ProfileInfoSkeleton />;
-  if (error || !profile)
-    return <ErrorCard message={error || 'User not found'} />;
+  if (loading || linkStatus === 'loading') return <ProfileInfoSkeleton />;
+  if (error || linkError || !profile)
+    return <ErrorCard message={error || linkError || 'User not found'} />;
 
   return (
     <div className="flex flex-col md:rounded-[1.5rem] mx-auto w-full mt-[4rem] md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem] justify-center">

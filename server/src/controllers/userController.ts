@@ -107,14 +107,14 @@ const login = catchAsync(async (req: Request, res: Response) => {
     const token = signToken(user._id.toString());
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in prod
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
-      // domain: '.yourdomain.com', // optional, only if needed
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
+      path: '/',
     });
     res.json({
       message: 'Form data recieved successfully',
       email: user.email,
-      token,
     });
   } catch (error: unknown) {
     console.error(error);
@@ -154,9 +154,17 @@ export const getToken = () => {
   return localStorage.getItem('token');
 };
 
-export const logout = () => {
-  localStorage.removeItem('token');
-};
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  res.cookie('token', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+  });
+
+  res.status(200).json({ status: 'success' });
+});
 const protectedRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1. Get token from both cookie and header
