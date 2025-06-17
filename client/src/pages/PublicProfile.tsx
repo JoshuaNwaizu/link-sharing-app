@@ -112,7 +112,9 @@ const PublicProfile = () => {
               const textColor = isLightBackground(bgColor)
                 ? 'text-black'
                 : 'text-white';
-
+              const iconFilter = isLightBackground(bgColor)
+                ? ''
+                : 'brightness-0 invert';
               return (
                 <a
                   key={link.url}
@@ -128,12 +130,14 @@ const PublicProfile = () => {
                       <img
                         src={`/images/icon-${link.platform}.svg`}
                         alt={link.platform}
+                        className={iconFilter}
                       />
                       <p className="capitalize">{link.platform}</p>
                     </span>
                     <img
                       src="/images/icon-arrow-right.svg"
                       alt="arrow"
+                      className={iconFilter}
                     />
                   </div>
                 </a>

@@ -61,7 +61,6 @@ const PhoneLink = () => {
           dispatch(fetchProfile()).unwrap(),
           dispatch(fetchLinks()).unwrap(),
         ]);
-        // await dispatch(fetchProfileById(data._id)).unwrap();
       } catch (err) {
         console.error('Error loading initial data:', err);
       } finally {
@@ -289,8 +288,11 @@ const PhoneLink = () => {
                 ? links.map((link, index) => {
                     const bgColor = getPlatformColor(link.platform);
                     const textColor = isLightBackground(bgColor)
-                      ? '#000'
-                      : '#fff';
+                      ? 'text-black'
+                      : 'text-white';
+                    const iconFilter = isLightBackground(bgColor)
+                      ? ''
+                      : 'brightness-0 invert';
 
                     return (
                       <motion.a
@@ -314,20 +316,16 @@ const PhoneLink = () => {
                         >
                           <img
                             src={`/images/icon-${link.platform.toLowerCase()}.svg`}
-                            alt=""
-                            className="w-4 h-4"
+                            alt={link.platform}
+                            className={`w-4 h-4 ${iconFilter}`}
                           />
-                          <span
-                            className={`ml-3 capitalize ${
-                              textColor === '#000' ? 'text-black' : 'text-white'
-                            }`}
-                          >
+                          <span className={`ml-3 capitalize ${textColor} `}>
                             {link.platform}
                           </span>
                           <img
                             src="/images/icon-arrow-right.svg"
-                            alt=""
-                            className="w-5 h-5 absolute right-4"
+                            alt="arrow right"
+                            className={`w-5 h-5 absolute right-4 ${iconFilter}`}
                           />
                         </div>
                       </motion.a>

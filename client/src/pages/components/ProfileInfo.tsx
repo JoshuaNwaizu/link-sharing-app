@@ -138,6 +138,9 @@ const ProfileInfo = () => {
               const textColor = isLightBackground(bgColor)
                 ? 'text-black'
                 : 'text-white';
+              const iconFilter = isLightBackground(bgColor)
+                ? ''
+                : 'brightness-0 invert';
 
               return (
                 <a
@@ -156,7 +159,8 @@ const ProfileInfo = () => {
                     <span className="flex gap-2">
                       <img
                         src={`/images/icon-${link.platform}.svg`}
-                        alt=""
+                        className={iconFilter}
+                        alt={link.platform}
                       />
                       <p className="capitalize">{link.platform}</p>
                     </span>
@@ -164,6 +168,7 @@ const ProfileInfo = () => {
                     <img
                       src="/images/icon-arrow-right.svg"
                       alt="arrow"
+                      className={iconFilter}
                     />
                   </div>
                 </a>
