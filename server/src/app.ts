@@ -19,7 +19,7 @@ const corsOptions = {
   origin: process.env.FRONTEND_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  credentials: true, // Important for cookies
 };
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
@@ -30,13 +30,17 @@ app.use(
   session({
     secret: process.env.JWT_SECRET as string,
     resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    saveUninitialized: false, // Changed to false for better security
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 60 * 24 * 60 * 60, // 60 days session lifetime
+    }),
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days in milliseconds
+      path: '/',
     },
   }),
 );

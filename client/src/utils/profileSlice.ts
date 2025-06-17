@@ -119,8 +119,8 @@ export const fetchProfileById =
     dispatch(setError(null));
 
     try {
-      const response = await fetch(`${API}/profile/${id}`, {
-        credentials: 'include', // <-- Add this!
+      const response: Response = await fetch(`${API}/profile/${id}`, {
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -201,7 +201,7 @@ export const updateProfile = createAsyncThunk(
 
       dispatch(
         setProfileData({
-          id: data._id, // ✅ include this
+          id: data._id,
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,

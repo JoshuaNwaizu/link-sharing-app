@@ -105,11 +105,12 @@ const login = catchAsync(async (req: Request, res: Response) => {
       return;
     }
     const token = signToken(user._id.toString());
+
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days in milliseconds
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days in milliseconds
       path: '/',
     });
     res.json({
@@ -204,5 +205,43 @@ const protectedRoute = catchAsync(
     }
   },
 );
+export const checkAuth = catchAsync(async (req: Request, res: Response) => {
+  const token = req.cookies.token;
 
+  if (!token) {
+    res.status(401).json({
+      status: 'fail',
+      message: 'Not authenticated',
+    });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret) as { id: string };
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user) {
+      res.status(401).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: {
+          id: user._id,
+          email: user.email,
+        },
+      },
+    });
+  } catch (error) {
+    res.status(401).json({
+      status: 'fail',
+      message: 'Invalid token',
+    });
+  }
+});
 export { createAccount, login, protectedRoute };

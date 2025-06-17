@@ -3,8 +3,7 @@ import { AppDispatch, RootState } from '../../store';
 import cleanUrl from '../../utils/cleanUrl';
 import { useEffect, useState } from 'react';
 import { fetchLinks } from '../../utils/linkSlice';
-import { API } from '../../App';
-import { fetchProfileById } from '../../utils/profileSlice';
+import { fetchProfile } from '../../utils/profileSlice';
 import { motion } from 'framer-motion';
 import { selectUserEmail } from '../../utils/dataSlice';
 
@@ -35,10 +34,8 @@ const PhoneLink = () => {
     (state: RootState) => state.profile,
   );
   const email = useSelector(selectUserEmail);
-
-  // const profileState = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>();
-
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { links } = useSelector((state: RootState) => state.link);
   const emptyRects = Array.from({ length: 5 }, (_, i) => ({
     id: `empty-${i}`,
@@ -56,61 +53,81 @@ const PhoneLink = () => {
   };
 
   useEffect(() => {
-    const getProfileAndLinks = async () => {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        console.error('No token found');
-        return;
-      }
-
+    const loadInitialData = async () => {
+      setIsLoading(true);
       try {
-        // Fetch profile data
-        const res = await fetch(`${API}/me`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(
-            `Failed to fetch profile: ${res.status} ${errorText}`,
-          );
-        }
-
-        const data = await res.json();
-        console.log(data);
-
-        if (!data) {
-          return;
-        }
-        const linksRes = await fetch(`${API}/links`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!linksRes.ok) {
-          throw new Error(`Failed to fetch links: ${linksRes.status}`);
-        }
-
-        await linksRes.json();
-
-        // Dispatch actions to fetch profile and links
-        await dispatch(fetchProfileById(data._id));
-
-        await dispatch(fetchLinks());
+        // Fetch both profile and links concurrently
+        await Promise.all([
+          dispatch(fetchProfile()).unwrap(),
+          dispatch(fetchLinks()).unwrap(),
+        ]);
+        // await dispatch(fetchProfileById(data._id)).unwrap();
       } catch (err) {
-        console.error('Error fetching data:', err);
-        // setDataError(true);
+        console.error('Error loading initial data:', err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    getProfileAndLinks();
+    loadInitialData();
   }, [dispatch]);
+
+  // useEffect(() => {
+  //   const getProfileAndLinks = async () => {
+  //     const token: string | null = localStorage.getItem('token');
+
+  //     if (!token) {
+  //       console.error('No token found');
+  //       return;
+  //     }
+
+  //     try {
+  //       // Fetch profile data
+  //       const res = await fetch(`${API}/me`, {
+  //         method: 'GET',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       if (!res.ok) {
+  //         const errorText = await res.text();
+  //         throw new Error(
+  //           `Failed to fetch profile: ${res.status} ${errorText}`,
+  //         );
+  //       }
+
+  //       const data = await res.json();
+  //       console.log(data);
+
+  //       if (!data) {
+  //         return;
+  //       }
+  //       const linksRes = await fetch(`${API}/links`, {
+  //         method: 'GET',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       if (!linksRes.ok) {
+  //         throw new Error(`Failed to fetch links: ${linksRes.status}`);
+  //       }
+
+  //       await linksRes.json();
+
+  //       // Dispatch actions to fetch profile and links
+  //       await dispatch(fetchProfileById(data._id));
+
+  //       await dispatch(fetchLinks());
+  //     } catch (err) {
+  //       console.error('Error fetching data:', err);
+  //       // setDataError(true);
+  //     }
+  //   };
+
+  //   getProfileAndLinks();
+  // }, [dispatch]);
 
   useEffect(() => {
     setUserData({
@@ -120,6 +137,20 @@ const PhoneLink = () => {
       imageUrl: imageUrl || '',
     });
   }, [firstName, lastName, email, imageUrl]);
+
+  if (isLoading) {
+    return (
+      <div className="max-xl:hidden bg-white h-[52.125rem] rounded-[1rem] p-[1.5rem] w-[30rem] items-center flex justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          Loading...
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-xl:hidden bg-white h-[52.125rem] rounded-[1rem]  p-[1.5rem] w-[30rem] items-center flex justify-center">

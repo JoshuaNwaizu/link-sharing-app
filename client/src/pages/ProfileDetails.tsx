@@ -12,14 +12,12 @@ import {
 import { Profile } from '../utils/cleanUrl';
 import { toast, ToastContainer } from 'react-toastify';
 import Loader from './components/Loader';
-import { useNavigate } from 'react-router';
+import { NavigateFunction, useNavigate } from 'react-router';
 
 const ProfileDetails = () => {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const dispatch = useAppDispatch();
 
-  // const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
-  //   useSelector((state: RootState) => state.profile);
   const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
     useSelector((state: RootState) => state.profile);
   const userData = useSelector((state: RootState) => state.data.data);
@@ -29,7 +27,7 @@ const ProfileDetails = () => {
   const isFormValid = () => {
     return Boolean(firstName?.trim() || lastName?.trim() || email?.trim());
   };
-  // Fetch profile on component mount
+
   useEffect(() => {
     dispatch(fetchProfile())
       .unwrap()
@@ -49,6 +47,7 @@ const ProfileDetails = () => {
       })
       .catch((error) => console.error('Failed to fetch profile:', error));
   }, [dispatch]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(
