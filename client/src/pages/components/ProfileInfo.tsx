@@ -146,12 +146,13 @@ const ProfileInfo = () => {
                 <a
                   href={cleanUrl(link.url)}
                   target="_blank"
+                  className="block group"
                   rel="noopener noreferrer"
                 >
                   {' '}
                   <div
                     key={link.url}
-                    className={`flex items-center justify-between p-4 rounded-lg ${textColor}`}
+                    className={`flex items-center relative justify-between p-4 rounded-lg ${textColor}`}
                     style={{
                       backgroundColor: bgColor,
                     }}
@@ -168,7 +169,7 @@ const ProfileInfo = () => {
                     <img
                       src="/images/icon-arrow-right.svg"
                       alt="arrow"
-                      className={iconFilter}
+                      className={`w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-2 ${iconFilter}`}
                     />
                   </div>
                 </a>

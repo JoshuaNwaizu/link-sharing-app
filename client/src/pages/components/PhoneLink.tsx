@@ -300,7 +300,7 @@ const PhoneLink = () => {
                         href={cleanUrl(link.url)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block"
+                        className="block group"
                         initial={{ x: index % 2 === 0 ? -50 : 50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{
@@ -325,7 +325,7 @@ const PhoneLink = () => {
                           <img
                             src="/images/icon-arrow-right.svg"
                             alt="arrow right"
-                            className={`w-5 h-5 absolute right-4 ${iconFilter}`}
+                            className={`w-5 h-5 absolute right-4  transform transition-transform duration-300 ease-in-out group-hover:translate-x-2 ${iconFilter}`}
                           />
                         </div>
                       </motion.a>

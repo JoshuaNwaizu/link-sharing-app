@@ -1,13 +1,17 @@
 import { FiLogOut } from 'react-icons/fi';
 import { Link, NavLink, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
-// import { ToastContainer, toast } from 'react-hot-toast';
+import { API } from '../../../App';
 
 const Nav = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.clear(); // Clear all localStorage data
+  const handleLogout = async () => {
+    await fetch(`${API}/logout`, {
+      method: 'GET', // or 'POST' if you change it to a POST route
+      credentials: 'include',
+    });
+
     toast.success('Logged out successfully');
     navigate('/auth/login'); // Redirect to login page
   };
@@ -92,7 +96,7 @@ const Nav = () => {
         <div className="flex items-center  gap-3 ">
           <Link
             to={'profile/profile-info'}
-            className="py-[0.69rem] px-[1rem]  rounded-[.5rem] border border-[#633CFF]"
+            className="py-[0.69rem] px-[1rem] hover:bg-[#EFEBFF] transition-all duration-300  rounded-[.5rem] border border-[#633CFF]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +113,7 @@ const Nav = () => {
           </Link>
           <button
             onClick={handleLogout}
-            className="py-[.8rem] px-[1rem] rounded-[.5rem] border border-[#633CFF] text-[#633CFF] hover:bg-[#EFEBFF] transition-all duration-300 font-semibold"
+            className="flex items-center justify-center py-3 px-4 rounded-lg border border-[#633CFF] text-[#633CFF] hover:bg-[#EFEBFF] transition-all duration-300 font-semibold"
           >
             <FiLogOut />
           </button>

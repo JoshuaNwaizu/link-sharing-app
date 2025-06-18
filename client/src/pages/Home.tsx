@@ -4,7 +4,6 @@ import Hero from './components/Hero';
 import LinkCard from './components/LinkCard';
 import { AppDispatch, RootState } from '../store';
 import { fetchLinks, saveLinks } from '../utils/linkSlice';
-import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ToastContainer, toast } from 'react-toastify';
 import LoadingSkeleton from './components/LoadingSkeleton';
@@ -16,7 +15,8 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import { AnimatePresence } from 'framer-motion';
-// ...other imports...
+import { API } from '../App';
+
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -34,31 +34,40 @@ const Home = () => {
     }));
     dispatch({ type: 'link/reorderLinks', payload: linksWithOrder });
   };
-  const fetchUserLinks = useCallback(async () => {
-    try {
-      await dispatch(fetchLinks()).unwrap();
-    } catch (error: any) {
-      console.error('Failed to fetch links:', error);
-      if (
-        error?.status === 401 ||
-        error?.response?.status === 401 ||
-        error?.message?.toLowerCase().includes('unauthorized')
-      ) {
-        navigate('/auth/signup');
-      } else {
-        console.error('Failed to fetch links:', error);
-      }
-    }
-  }, [dispatch, navigate]);
+  // const fetchUserLinks = useCallback(async () => {
+  //   try {
+  //     await dispatch(fetchLinks()).unwrap();
+  //   } catch (error: any) {
+  //     console.error('Failed to fetch links:', error);
+  //     if (
+  //       error?.status === 401 ||
+  //       error?.response?.status === 401 ||
+  //       error?.message?.toLowerCase().includes('unauthorized')
+  //     ) {
+  //       navigate('/auth/signup');
+  //     } else {
+  //       console.error('Failed to fetch links:', error);
+  //     }
+  //   }
+  // }, [dispatch, navigate]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchUserLinks();
-    return () => controller.abort();
-  }, [fetchUserLinks]);
+  // useEffect(() => {
+  //   const controller = new AbortController();
+  //   fetchUserLinks();
+  //   return () => controller.abort();
+  // }, [fetchUserLinks]);
 
   const handleSave = async () => {
     try {
+      // 🔒 Check if user is authenticated
+      const authRes = await fetch(`${API}/checkAuth`, {
+        credentials: 'include',
+      });
+
+      if (!authRes.ok) {
+        navigate('/auth/signup');
+        return;
+      }
       await dispatch(saveLinks()).unwrap();
       // Refetching links after successful save
       await dispatch(fetchLinks()).unwrap();
@@ -145,7 +154,7 @@ const Home = () => {
             <Button
               name={status === 'loading' ? 'Saving...' : 'Save'}
               type="button"
-              className={`mt-4 w-full md:w-auto text-white ${!links.length || (status === 'loading' && 'opacity-[0.25]')} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
+              className={`mt-4 w-full hover:bg-transparent hover:text-[#633CFF] hover:border-[#633CFF] border transition-colors duration-200 md:w-auto text-white ${!links.length || (status === 'loading' && 'opacity-[0.25]')} md:py-[0.6875rem] md:px-[1.6875rem] md:justify-end`}
               onClick={handleSave}
               disabled={status === 'loading' || links.length === 0}
             />
@@ -156,7 +165,7 @@ const Home = () => {
           autoClose={3000}
           hideProgressBar={true}
         />
-      </div>{' '}
+      </div>
     </>
   );
 };

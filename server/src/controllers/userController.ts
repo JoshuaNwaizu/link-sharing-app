@@ -155,17 +155,30 @@ export const getToken = () => {
   return localStorage.getItem('token');
 };
 
+// export const logout = catchAsync(async (req: Request, res: Response) => {
+//   res.cookie('token', 'loggedout', {
+//     expires: new Date(Date.now() + 10 * 1000),
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+//     path: '/',
+//   });
+
+//   res.status(200).json({ status: 'success' });
+// });
 export const logout = catchAsync(async (req: Request, res: Response) => {
-  res.cookie('token', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
+  res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/',
   });
 
-  res.status(200).json({ status: 'success' });
+  res
+    .status(200)
+    .json({ status: 'success', message: 'Logged out successfully' });
 });
+
 const protectedRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1. Get token from both cookie and header

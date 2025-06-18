@@ -20,7 +20,7 @@ const Hero = () => {
         </p>
       </span>
       <motion.button
-        className="cursor-pointer border border-[#633CFF] text-[#633CFF] rounded-[0.5rem] font-semibold leading-[1.5rem]  py-[0.6875rem] px-[1.6875rem]"
+        className="cursor-pointer border border-[#633CFF] hover:bg-[#633CFF] hover:text-white transition-colors duration-200 text-[#633CFF] rounded-[0.5rem] font-semibold leading-[1.5rem]  py-[0.6875rem] px-[1.6875rem]"
         onClick={handleAddLink}
         whileTap={{ scale: 0.95, y: 2 }}
         whileHover={{ scale: 1.01 }}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from './components/Button';
 import ProfileForms from './components/ProfileForms';
 import ProfilePicture from './components/ProfilePicture';
@@ -9,10 +9,11 @@ import {
   saveOrUpdateProfile,
   setProfileData,
 } from '../utils/profileSlice';
-import { Profile } from '../utils/cleanUrl';
+// import { Profile } from '../utils/cleanUrl';
 import { toast, ToastContainer } from 'react-toastify';
 import Loader from './components/Loader';
 import { NavigateFunction, useNavigate } from 'react-router';
+import { API } from '../App';
 
 const ProfileDetails = () => {
   const navigate: NavigateFunction = useNavigate();
@@ -28,25 +29,25 @@ const ProfileDetails = () => {
     return Boolean(firstName?.trim() || lastName?.trim() || email?.trim());
   };
 
-  useEffect(() => {
-    dispatch(fetchProfile())
-      .unwrap()
-      .then((profile: Profile | null) => {
-        if (profile) {
-          dispatch(
-            setProfileData({
-              firstName: profile.firstName,
-              lastName: profile.lastName,
-              email: profile.email,
-              imageUrl: profile.image?.url || null,
-              isEmailDisabled,
-            }),
-          );
-          setPreview(profile.image?.url || null);
-        }
-      })
-      .catch((error) => console.error('Failed to fetch profile:', error));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchProfile())
+  //     .unwrap()
+  //     .then((profile: Profile | null) => {
+  //       if (profile) {
+  //         dispatch(
+  //           setProfileData({
+  //             firstName: profile.firstName,
+  //             lastName: profile.lastName,
+  //             email: profile.email,
+  //             imageUrl: profile.image?.url || null,
+  //             isEmailDisabled,
+  //           }),
+  //         );
+  //         setPreview(profile.image?.url || null);
+  //       }
+  //     })
+  //     .catch((error) => console.error('Failed to fetch profile:', error));
+  // }, [dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -84,6 +85,14 @@ const ProfileDetails = () => {
     }
     await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
     try {
+      const authRes = await fetch(`${API}/checkAuth`, {
+        credentials: 'include',
+      });
+
+      if (!authRes.ok) {
+        navigate('/auth/signup');
+        return;
+      }
       // await dispatch(updateProfile(formDataToSend)).unwrap();
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
       toast.success('Profile updated successfully!', {
@@ -141,7 +150,7 @@ const ProfileDetails = () => {
             <Button
               name={loading ? 'Saving...' : 'Save'}
               type="button"
-              className={`mt-4 w-full md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem] ${
+              className={`mt-4 w-full hover:bg-transparent hover:text-[#633CFF] hover:border-[#633CFF] border transition-colors duration-200 md:w-auto text-white md:py-[0.6875rem] md:px-[1.6875rem] ${
                 loading || !isFormValid ? 'opacity-50' : ''
               }`}
               onClick={handleSubmit}

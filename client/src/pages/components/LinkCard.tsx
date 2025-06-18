@@ -211,10 +211,10 @@ const LinkCard = ({
                   <p
                     key={index}
                     onClick={() => handlePlatformSelect(name)}
-                    className={`flex items-center cursor-pointer gap-3 ${
+                    className={`flex items-center  px-2 py-1 cursor-pointer rounded-md transition-colors duration-200 gap-3 ${
                       platformTitle === name
-                        ? 'text-[#333] font-bold'
-                        : 'text-[#737373]'
+                        ? 'text-[#333] font-bold '
+                        : 'text-[#737373] hover:bg-[#f0f0f0] hover:text-black '
                     }`}
                   >
                     <img

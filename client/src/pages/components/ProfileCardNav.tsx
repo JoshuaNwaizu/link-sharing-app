@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import Button from './Button';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store';
 import { useEffect } from 'react';
@@ -52,19 +52,16 @@ const ProfileCardNav = () => {
           <Link to={'/profile-details'}>
             <Button
               name="Back to Editor"
-              className="py-[0.69rem] px-[1.7rem] bg-transparent text-[#633CFF] border-[#633CFF] border"
+              className="py-[0.69rem] px-[1.7rem] bg-transparent text-[#633CFF] border border-[#633CFF] hover:bg-[#633CFF] hover:text-white transition-colors duration-200"
             />
           </Link>
-          {/* <Link to={`/profile/${profile.id}`}> */}
           <Button
             name="Share Link"
             onClick={handleShareLink}
-            className="py-[0.69rem] px-[1.7rem] text-white bg-[#633CFF]"
+            className="py-[0.69rem] px-[1.7rem] text-white bg-[#633CFF] hover:bg-transparent hover:text-[#633CFF] hover:border-[#633CFF] border transition-colors duration-200"
           />
-          {/* </Link> */}
         </div>
       </div>
-      <ToastContainer position="top-center" />
     </nav>
   );
 };
