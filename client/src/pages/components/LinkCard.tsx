@@ -253,7 +253,7 @@ const LinkCard = ({
                 alt="link"
                 className="w-[1rem]"
               />
-              <span className="flex items-center">
+              <span className="flex w-full overflow-x-auto items-center">
                 <span className="text-[#737373]  select-none">
                   {platformPrefixes[platformTitle]}
                 </span>

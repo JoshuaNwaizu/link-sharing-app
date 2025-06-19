@@ -47,19 +47,10 @@ const ProfileInfo = () => {
 
   useEffect(() => {
     const getProfile = async () => {
-      const token = localStorage.getItem('token'); // or from cookies if you're using cookies
-
-      if (!token) {
-        console.error('No token found');
-        return;
-      }
-
       try {
         const res = await fetch(`${API}/me`, {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: 'include',
         });
 
         if (!res.ok) {
@@ -89,27 +80,32 @@ const ProfileInfo = () => {
     dispatch(fetchLinks());
   }, [dispatch]);
 
-  if (dataError) {
-    <ErrorCard
-      message="No profile information found. Please complete your profile."
-      retry={handleRetry}
-    />;
+  if (dataError && linkError) {
+    return (
+      <ErrorCard
+        message="Failed to load profile information. Please try again later."
+        retry={handleRetry}
+      />
+    );
   }
 
   if (error) {
-    <ErrorCard
-      message={error}
-      retry={handleRetry}
-    />;
+    return (
+      // Added missing return statement
+      <ErrorCard
+        message="We couldn't load your profile. Please check your connection and try again."
+        retry={handleRetry}
+      />
+    );
   }
 
-  if (status === 'loading')
+  if (status === 'loading') {
     return (
       <div>
         <ProfileInfoSkeleton />
       </div>
     );
-  if (linkError) return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="flex  flex-col md:rounded-[1.5rem] mx-auto w-full md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem]  justify-center ">

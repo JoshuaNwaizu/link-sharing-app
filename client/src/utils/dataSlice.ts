@@ -11,12 +11,13 @@ interface DataState {
   loading: boolean;
   error: string | null;
 }
+interface FetchDataParams {
+  url: string;
+  method: string;
+  body?: string;
+  headers?: Record<string, string>;
+}
 
-// const initialState: DataState = {
-//   data: null,
-//   loading: false,
-//   error: null,
-// };
 const getInitialState = (): DataState => {
   const savedData = localStorage.getItem('userData');
   return {
@@ -27,34 +28,37 @@ const getInitialState = (): DataState => {
 };
 export const fetchData = createAsyncThunk(
   'data/fetchData',
-  async (options: {
-    url: string;
-    method?: string;
-    body?: string;
-    headers?: Record<string, string>;
-  }) => {
-    const { url, method, body, headers } = options;
+  async (
+    { url, method, body, headers }: FetchDataParams,
+    { rejectWithValue },
+  ) => {
     try {
-      const response: any = await fetch(url, {
+      const response = await fetch(url, {
         method,
+        headers,
         body,
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers,
-        },
       });
-      console.log('Response status:', response.status); // Log the status
-      console.log('Response headers:', response.headers); // Log the headers
-      if (!response.ok) throw new Error('Failed to fetch data');
+
       const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue({
+          status: response.status,
+          message: data.message || 'Something went wrong',
+        });
+      }
+
       return data;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
+    } catch (error: any) {
+      return rejectWithValue({
+        status: 500,
+        message: 'Network error - please check your connection',
+      });
     }
   },
 );
+
 export const fetchUser = createAsyncThunk(
   'data/fetchUser',
   async (userId: string, { rejectWithValue }) => {

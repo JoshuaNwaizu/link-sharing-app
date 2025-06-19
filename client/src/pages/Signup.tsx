@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from '../store';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import Loader from './components/Loader';
@@ -90,6 +90,7 @@ const Signup = () => {
       toast.error('Passwords do not match');
       return;
     }
+
     try {
       const response = await dispatch(
         fetchData({
@@ -101,20 +102,27 @@ const Signup = () => {
           },
         }),
       ).unwrap();
-      console.log('Signup response:', response);
-      navigate('/auth/login');
-      if (response.token) {
+
+      if (response.status === 'success') {
         toast.success('Account created successfully!');
+        navigate('/auth/login');
+      } else {
+        throw new Error(response.message || 'Failed to create account');
       }
     } catch (err: any) {
-      console.error('Error creating account:', err);
-      console.error(err.message);
-      const status = err?.status || err?.response?.status || err?.code;
-      console.error('Error status:', status);
-      if (status === 404) {
-        toast.error('Email is already in use');
+      console.error('Signup error:', err);
+
+      // Check for rejected value from thunk
+      const error = err.payload || err;
+
+      if (error?.status === 409) {
+        toast.error('Email already in use');
+      } else if (error?.status === 400) {
+        toast.error(error.message || 'Invalid input');
+      } else if (!navigator.onLine) {
+        toast.error('Network error - please check your connection');
       } else {
-        toast.error('Error creating account');
+        toast.error(error?.message || 'Failed to create account');
       }
     }
   };
@@ -203,6 +211,18 @@ const Signup = () => {
           </Link>
         </div>
       </motion.div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };

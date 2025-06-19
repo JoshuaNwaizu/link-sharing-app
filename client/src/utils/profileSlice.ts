@@ -238,11 +238,9 @@ export const saveOrUpdateProfile = createAsyncThunk(
 
       let response;
       if (checkResponse.status === 404) {
-        // No profile exists, create new one
         response = await fetch(`${API}/profiles`, {
           method: 'POST',
           credentials: 'include', // <-- This is required!
-
           body: formData,
         });
       } else {

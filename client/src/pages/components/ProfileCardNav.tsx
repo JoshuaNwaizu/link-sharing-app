@@ -1,14 +1,17 @@
 import { Link } from 'react-router';
 import Button from './Button';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store';
 import { useEffect } from 'react';
 import { fetchProfile } from '../../utils/profileSlice';
+import { API } from '../../App';
 
 const ProfileCardNav = () => {
   const dispatch = useAppDispatch();
-  const profile = useSelector((state: RootState) => state.profile);
+  const { id, firstName, lastName, imageUrl } = useSelector(
+    (state: RootState) => state.profile,
+  );
 
   useEffect(() => {
     console.log('Fetching profile...');
@@ -26,10 +29,16 @@ const ProfileCardNav = () => {
   }, [dispatch]);
 
   const handleShareLink = async () => {
-    let profileId: string | undefined = profile.id;
+    // Check if profile is complete
+    if (!firstName || !lastName || !imageUrl) {
+      toast.error('Please complete your profile before sharing');
+      return;
+    }
+
+    let profileId = id;
     if (!profileId) {
       const storedId = localStorage.getItem('profileId');
-      profileId = storedId !== null ? storedId : undefined;
+      profileId = storedId || undefined;
     }
 
     if (!profileId) {
@@ -38,11 +47,22 @@ const ProfileCardNav = () => {
     }
 
     try {
+      // Check if user is authenticated
+      const authResponse = await fetch(`${API}/checkAuth`, {
+        credentials: 'include',
+      });
+
+      if (!authResponse.ok) {
+        toast.error('Please log in to share your profile');
+        return;
+      }
+
       const profileUrl = `${window.location.origin}/profile/${profileId}`;
       await navigator.clipboard.writeText(profileUrl);
       toast.success('Link copied to clipboard!');
     } catch (error) {
-      toast.error('Failed to copy link. Please try again.');
+      console.error('Error sharing link:', error);
+      toast.error('Failed to share link. Please try again.');
     }
   };
   return (
@@ -62,6 +82,18 @@ const ProfileCardNav = () => {
           />
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </nav>
   );
 };

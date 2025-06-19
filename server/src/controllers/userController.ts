@@ -40,6 +40,15 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       res.status(400).json({ message: 'Passwords do not match' });
       return;
     }
+    // Check if user exists first
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(409).json({
+        status: 'error',
+        message: 'Email already in use',
+      });
+      return;
+    }
     const hashedPass = await bcrypt.hash(password, 10);
     console.log('Request: ', req.body);
 
@@ -155,17 +164,6 @@ export const getToken = () => {
   return localStorage.getItem('token');
 };
 
-// export const logout = catchAsync(async (req: Request, res: Response) => {
-//   res.cookie('token', 'loggedout', {
-//     expires: new Date(Date.now() + 10 * 1000),
-//     httpOnly: true,
-//     secure: process.env.NODE_ENV === 'production',
-//     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-//     path: '/',
-//   });
-
-//   res.status(200).json({ status: 'success' });
-// });
 export const logout = catchAsync(async (req: Request, res: Response) => {
   res.clearCookie('token', {
     httpOnly: true,
