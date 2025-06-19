@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import User from '../models/UserModel';
-import Link from '../models/LinkModel';
 import mongoose from 'mongoose';
+import Link from '../models/LinkModel';
 import Profile from '../models/ProfileModel';
 
 const saveLinks = catchAsync(async (req: Request, res: Response) => {
@@ -88,7 +88,6 @@ const getLinks = catchAsync(async (req: Request, res: Response) => {
 const getOflineLinks = catchAsync(async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
-    console.log('Attempting to fetch links for userId:', userId);
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       console.log('Invalid userId format');
@@ -101,11 +100,9 @@ const getOflineLinks = catchAsync(async (req: Request, res: Response) => {
 
     // First check if this is a profile ID and get the user info
     const profile = await Profile.findById(userId);
-    console.log('Found profile:', profile);
 
     // If profile exists, use its user ID, otherwise use the provided ID
     const queryUserId = profile ? profile.user : userId;
-    console.log('Using queryUserId:', queryUserId);
 
     // Find links for the user
     const userLinks = await Link.find({
@@ -114,8 +111,6 @@ const getOflineLinks = catchAsync(async (req: Request, res: Response) => {
       .select('platform url order _id user') // Added 'user' to selected fields
       .sort('order')
       .lean();
-
-    console.log('Found links for user:', userLinks);
 
     res.status(200).json({
       status: 'success',

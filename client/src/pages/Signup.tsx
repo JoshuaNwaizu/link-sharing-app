@@ -19,10 +19,8 @@ const Signup = () => {
     showErrors: false,
   });
   const navigate = useNavigate();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.data,
-  );
-  console.log(data, loading, error);
+  const { loading } = useSelector((state: RootState) => state.data);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -110,9 +108,6 @@ const Signup = () => {
         throw new Error(response.message || 'Failed to create account');
       }
     } catch (err: any) {
-      console.error('Signup error:', err);
-
-      // Check for rejected value from thunk
       const error = err.payload || err;
 
       if (error?.status === 409) {

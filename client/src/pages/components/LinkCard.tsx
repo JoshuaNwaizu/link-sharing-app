@@ -127,17 +127,24 @@ const LinkCard = ({
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newUserInput = e.target.value;
-    setUserInput(newUserInput);
-    setError('');
-
+    const fullValue = e.target.value;
     const prefix = platformPrefixes[platformTitle] || '';
-    const fullUrl = `${prefix}${newUserInput}`;
 
-    if (!newUserInput) {
+    // Only allow input that starts with the correct prefix
+    if (!fullValue.startsWith(prefix)) return;
+
+    // Get the part the user can actually change
+    const editablePart = fullValue.slice(prefix.length);
+    setUserInput(editablePart);
+
+    const fullUrl = `${prefix}${editablePart}`;
+
+    if (!editablePart) {
       setError("Can't be empty");
     } else if (!isValidUrl(fullUrl, platformTitle)) {
       setError('Please check the URL');
+    } else {
+      setError('');
     }
 
     dispatch(
@@ -149,6 +156,17 @@ const LinkCard = ({
     );
   };
 
+  // Ensure cursor doesn't move into the non-editable prefix
+  const handleProtectCursor = (e: React.SyntheticEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const prefixLength = platformPrefixes[platformTitle].length;
+
+    setTimeout(() => {
+      if (input.selectionStart! < prefixLength) {
+        input.setSelectionRange(prefixLength, prefixLength);
+      }
+    }, 0);
+  };
   useEffect(() => {
     setPlatformTitle(platform);
   }, [platform]);
@@ -247,25 +265,28 @@ const LinkCard = ({
           {/* URL INPUT */}
           <div className="flex flex-col gap-3">
             <p>Link</p>
-            <span className="flex items-center transition-all duration-250 gap-2 bg-[#fff] border focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] p-[1rem] rounded-[0.5rem]">
+            <div className="flex items-center transition-all duration-250 gap-2 bg-[#fff] border focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] p-[1rem] rounded-[0.5rem]">
               <img
                 src="/images/icon-link.svg"
                 alt="link"
                 className="w-[1rem]"
               />
-              <span className="flex w-full overflow-x-auto items-center">
-                <span className="text-[#737373]  select-none">
+              <span className="flex w-full overflow-x-auto bg-red-200 items-center">
+                {/* <span className="text-[#737373]  select-none">
                   {platformPrefixes[platformTitle]}
-                </span>
+                </span> */}
                 <input
                   type="text"
-                  value={userInput}
+                  inputMode="url"
+                  value={`${platformPrefixes[platformTitle]}${userInput}`}
                   placeholder="e.g. johnappleseed"
-                  className="outline-none border-none  text-[#737373] bg-white w-full"
+                  className="outline-none border-none text-[#737373] bg-white focus:ring-0 w-full"
                   onChange={handleUrlChange}
+                  onClick={handleProtectCursor}
+                  onKeyDown={handleProtectCursor}
                 />
               </span>
-            </span>
+            </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>
         </div>

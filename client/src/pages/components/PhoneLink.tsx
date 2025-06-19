@@ -71,63 +71,6 @@ const PhoneLink = () => {
     loadInitialData();
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   const getProfileAndLinks = async () => {
-  //     const token: string | null = localStorage.getItem('token');
-
-  //     if (!token) {
-  //       console.error('No token found');
-  //       return;
-  //     }
-
-  //     try {
-  //       // Fetch profile data
-  //       const res = await fetch(`${API}/me`, {
-  //         method: 'GET',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (!res.ok) {
-  //         const errorText = await res.text();
-  //         throw new Error(
-  //           `Failed to fetch profile: ${res.status} ${errorText}`,
-  //         );
-  //       }
-
-  //       const data = await res.json();
-  //       console.log(data);
-
-  //       if (!data) {
-  //         return;
-  //       }
-  //       const linksRes = await fetch(`${API}/links`, {
-  //         method: 'GET',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (!linksRes.ok) {
-  //         throw new Error(`Failed to fetch links: ${linksRes.status}`);
-  //       }
-
-  //       await linksRes.json();
-
-  //       // Dispatch actions to fetch profile and links
-  //       await dispatch(fetchProfileById(data._id));
-
-  //       await dispatch(fetchLinks());
-  //     } catch (err) {
-  //       console.error('Error fetching data:', err);
-  //       // setDataError(true);
-  //     }
-  //   };
-
-  //   getProfileAndLinks();
-  // }, [dispatch]);
-
   useEffect(() => {
     setUserData({
       firstName: firstName || '',
@@ -325,7 +268,7 @@ const PhoneLink = () => {
                           <img
                             src="/images/icon-arrow-right.svg"
                             alt="arrow right"
-                            className={`w-5 h-5 absolute right-4  transform transition-transform duration-300 ease-in-out group-hover:translate-x-2 ${iconFilter}`}
+                            className={`w-5 h-5 absolute right-4  transform transition-transform duration-300 ease-in-out group-hover:translate-x-2 ${iconFilter} `}
                           />
                         </div>
                       </motion.a>

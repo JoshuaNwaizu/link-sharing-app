@@ -13,9 +13,7 @@ import { motion } from 'framer-motion';
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.data,
-  );
+  const { loading } = useSelector((state: RootState) => state.data);
   const [formValues, setFormValues] = useState({
     email: '',
     password: '',
@@ -89,11 +87,9 @@ const Login = () => {
       }
       navigate('/');
     } catch (err: any) {
-      console.error('Error creating account:', err);
       toast.error('Email or password is incorrect');
     }
   };
-  console.log(data, loading, error);
 
   return (
     <>

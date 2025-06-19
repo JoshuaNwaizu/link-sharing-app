@@ -65,7 +65,7 @@ const Home = () => {
       });
 
       if (!authRes.ok) {
-        navigate('/auth/signup');
+        navigate('/auth/login');
         return;
       }
       await dispatch(saveLinks()).unwrap();

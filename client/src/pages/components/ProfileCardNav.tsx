@@ -14,14 +14,12 @@ const ProfileCardNav = () => {
   );
 
   useEffect(() => {
-    console.log('Fetching profile...');
     dispatch(fetchProfile())
       .unwrap()
       .then((result) => {
         if (result?.id) {
           localStorage.setItem('profileId', result.id);
         }
-        console.log('Profile fetched successfully:', result);
       })
       .catch((error) => {
         console.error('Error fetching profile:', error);

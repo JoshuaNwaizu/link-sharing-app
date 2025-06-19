@@ -26,7 +26,6 @@ const ProfileInfo = () => {
   const [dataError, setDataError] = useState<boolean>(false);
   const handleRetry = () => {
     if (data?.userId) {
-      // Add null check for userId
       dispatch(fetchProfileById(data.userId));
       dispatch(fetchLinks());
     } else {
@@ -35,7 +34,6 @@ const ProfileInfo = () => {
     }
   };
   const getPlatformColor = (platform: string): string => {
-    // Normalize: remove dashes, dots, spaces, and lowercase
     const normalized = platform.toLowerCase().replace(/[\s.-]/g, '');
     return (
       platformColors[normalized as keyof typeof platformColors] || '#1A1A1A'
@@ -65,7 +63,6 @@ const ProfileInfo = () => {
         if (!data) {
           setDataError(true);
         }
-        console.log(data.id);
 
         dispatch(fetchProfileById(data._id));
       } catch (err) {

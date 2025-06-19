@@ -97,7 +97,6 @@ export const dataSlice = createSlice({
           token: action.payload.token,
         };
         localStorage.setItem('userData', JSON.stringify(state.data));
-        console.log('Email stored in Redux:', action.payload.email); // Debug log
       })
       .addCase(fetchData.rejected, (state, action) => {
         state.loading = false;

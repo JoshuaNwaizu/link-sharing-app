@@ -16,16 +16,12 @@ interface ProfileFormsProps {
 const ProfileForms: React.FC<ProfileFormsProps> = ({
   formData,
   onInputChange,
-  // userEmail,
 }) => {
   const dispatch = useAppDispatch();
   const userData = useSelector((state: RootState) => state.data.data);
   const email = useSelector(selectUserEmail);
 
   const userId = userData?.userId;
-
-  console.log('the userId is:', userId);
-  console.log('the email is:', email);
 
   useEffect(() => {
     if (!email && userId) {

@@ -141,8 +141,7 @@ export const saveLinks = createAsyncThunk(
     if (!response.ok) {
       throw new Error('Failed to save links');
     }
-    const data = await response.json();
-    console.log(data);
+    await response.json();
   },
 );
 

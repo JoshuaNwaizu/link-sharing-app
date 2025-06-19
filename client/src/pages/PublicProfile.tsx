@@ -51,17 +51,12 @@ const PublicProfile = () => {
 
         const profileRes = await fetch(`${API}/profile/${id}`);
         const profileData = await profileRes.json();
-        console.log('Profile data:', profileData);
-        console.log('Profile user ID:', profileData.user);
 
         setProfile(profileData);
 
         // Add error handling for the dispatch
         try {
-          const result = await dispatch(
-            fetchOflineLinks(profileData.user),
-          ).unwrap();
-          console.log('Fetched links result:', result);
+          await dispatch(fetchOflineLinks(profileData.user)).unwrap();
         } catch (err) {
           console.error('Error fetching links:', err);
           setError(
@@ -82,7 +77,11 @@ const PublicProfile = () => {
   }, [id, dispatch]);
   if (loading || linkStatus === 'loading') return <ProfileInfoSkeleton />;
   if (error || linkError || !profile)
-    return <ErrorCard message={error || linkError || 'User not found'} />;
+    return (
+      <ErrorCard
+        message={error || linkError || 'Unable to get user information'}
+      />
+    );
 
   return (
     <div className="flex flex-col md:rounded-[1.5rem] mx-auto w-full mt-[4rem] md:shadow-[0_0_32px_0_rgba(0,0,0,0.10)] md:bg-[#fff] items-center xl:w-[21rem] md:py-[3rem] md:px-[3.5rem] justify-center">
