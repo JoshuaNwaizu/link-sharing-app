@@ -65,7 +65,6 @@ const Home = () => {
       return;
     }
     try {
-      // 🔒 Check if user is authenticated
       const authRes = await fetch(`${API}/checkAuth`, {
         credentials: 'include',
       });
@@ -83,13 +82,7 @@ const Home = () => {
       toast.error('Error saving link!');
     }
   };
-  // useEffect(() => {
-  //   if (toastState.message) {
-  //     toast[toastState.type || 'success'](toastState.message);
-  //     dispatch(clearToast());
-  //   }
-  // }, [toastState, dispatch]);
-  // Show loading state
+
   if (status === 'loading' && !links.length) {
     return <LoadingSkeleton />;
   }

@@ -32,6 +32,67 @@ const signToken = (id: string): string => {
   });
 };
 
+// const createAccount = catchAsync(async (req: Request, res: Response) => {
+//   try {
+//     const { email, password, confirmPassword } = req.body;
+
+//     if (password !== confirmPassword) {
+//       res.status(400).json({ message: 'Passwords do not match' });
+//       return;
+//     }
+//     // Check if user exists first
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       res.status(409).json({
+//         status: 'error',
+//         message: 'Email already in use',
+//       });
+//       return;
+//     }
+//     const hashedPass = await bcrypt.hash(password, 10);
+//     console.log('Request: ', req.body);
+
+//     try {
+//       const user = await User.create({
+//         email,
+//         password: hashedPass,
+//       });
+//       const token = signToken(user._id.toString());
+//       res.status(201).json({
+//         message: 'Register data recieved successfully',
+//         email: user.email,
+//         password,
+//         userId: user._id,
+
+//         token,
+//       });
+//       console.log(
+//         'Register data recieved successfully',
+//         email,
+//         password,
+//         user,
+//         token,
+//       );
+//     } catch (error) {
+//       const mongoError = error as MongoError;
+//       if (mongoError.code === 11000) {
+//         res.status(400).json({ message: 'User already exists' });
+//         console.error('User already exists:', mongoError);
+//         return;
+//       }
+//       res.status(500).json({ message: 'Internal server error' });
+//       console.error(mongoError);
+//     }
+//     res.json({
+//       message: 'Register data recieved successfully',
+//       email,
+//       // password,
+//     });
+//     console.log(`user:${email}  password:${password}`);
+//   } catch (error: unknown) {
+//     console.error(error);
+//   }
+// });
 const createAccount = catchAsync(async (req: Request, res: Response) => {
   try {
     const { email, password, confirmPassword } = req.body;
@@ -50,7 +111,6 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       return;
     }
     const hashedPass = await bcrypt.hash(password, 10);
-    console.log('Request: ', req.body);
 
     try {
       const user = await User.create({
@@ -59,20 +119,13 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       });
       const token = signToken(user._id.toString());
       res.status(201).json({
-        message: 'Register data recieved successfully',
+        status: 'success',
+        message: 'Account created successfully',
         email: user.email,
-        password,
         userId: user._id,
-
         token,
       });
-      console.log(
-        'Register data recieved successfully',
-        email,
-        password,
-        user,
-        token,
-      );
+      console.log('Register data recieved successfully', email, user, token);
     } catch (error) {
       const mongoError = error as MongoError;
       if (mongoError.code === 11000) {
@@ -83,17 +136,10 @@ const createAccount = catchAsync(async (req: Request, res: Response) => {
       res.status(500).json({ message: 'Internal server error' });
       console.error(mongoError);
     }
-    res.json({
-      message: 'Register data recieved successfully',
-      email,
-      // password,
-    });
-    console.log(`user:${email}  password:${password}`);
   } catch (error: unknown) {
     console.error(error);
   }
 });
-
 const login = catchAsync(async (req: Request, res: Response) => {
   try {
     console.log('Request: ', req.body);

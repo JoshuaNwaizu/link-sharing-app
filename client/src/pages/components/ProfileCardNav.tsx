@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import Button from './Button';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -9,9 +9,14 @@ import { API } from '../../App';
 
 const ProfileCardNav = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const { id, firstName, lastName, imageUrl } = useSelector(
     (state: RootState) => state.profile,
   );
+  const handleGoBack = () => {
+    navigate(-1); // Goes back one page in history
+  };
 
   useEffect(() => {
     dispatch(fetchProfile())
@@ -67,12 +72,12 @@ const ProfileCardNav = () => {
     <nav className="md:bg-[#633CFF] md:rounded-b-[2rem] md:h-[22rem] md:w-[48rem] w-full xl:w-[84rem]">
       <div className="max-w-[79.75rem] xl:w-[79.75rem] md:w-[42.75rem] w-full mx-auto">
         <div className="flex md:items-center sm:w-[24rem] md:w-full md: md:bg-white my-2.5 py-4 px-6 rounded-lg justify-between">
-          <Link to={'/profile-details'}>
-            <Button
-              name="Back to Editor"
-              className="py-[0.69rem] px-[1.7rem] bg-transparent text-[#633CFF] border border-[#633CFF] hover:bg-[#633CFF] hover:text-white transition-colors duration-200"
-            />
-          </Link>
+          <Button
+            name="Back to Editor"
+            onClick={handleGoBack}
+            className="py-[0.69rem] px-[1.7rem] bg-transparent text-[#633CFF] border border-[#633CFF] hover:bg-[#633CFF] hover:text-white transition-colors duration-200"
+          />
+
           <Button
             name="Share Link"
             onClick={handleShareLink}
@@ -80,18 +85,6 @@ const ProfileCardNav = () => {
           />
         </div>
       </div>
-      {/* <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      /> */}
     </nav>
   );
 };

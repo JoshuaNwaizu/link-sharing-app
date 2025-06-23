@@ -102,6 +102,7 @@ const Signup = () => {
         }),
       ).unwrap();
 
+      console.log(response);
       if (response.status === 'success') {
         dispatch(
           setToast({

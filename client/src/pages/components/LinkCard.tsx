@@ -89,7 +89,7 @@ const LinkCard = ({
   const handlePlatformSelect = (item: string) => {
     if (item === platformTitle) {
       setIsDropDown(false);
-      dispatch(toggleOptionTitle('')); // Close the dropdown in Redux too
+      dispatch(toggleOptionTitle(''));
       return;
     }
     setPlatformTitle(item);
