@@ -285,7 +285,7 @@ const LinkCard = ({
               </div>
             </div>
 
-            <p className="text-red-500 text-sm">{error}</p>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>
         </div>
       </motion.div>

@@ -9,7 +9,11 @@ import ProfileLayout from './layouts/profileLayout/ProfileLayout';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
 import PublicProfile from './pages/PublicProfile';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import { useEffect } from 'react';
+import { clearToast } from './utils/toastSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from './store';
 
 export const API = import.meta.env.VITE_BASE_URL as string;
 
@@ -38,6 +42,14 @@ const router = createBrowserRouter([
   { element: <PublicProfile />, path: '/profile/:id' },
 ]);
 const App = () => {
+  const toastState = useSelector((state: RootState) => state.toast);
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    if (toastState.message) {
+      toast[toastState.type || 'success'](toastState.message);
+      dispatch(clearToast());
+    }
+  }, [toastState, dispatch]);
   return (
     <>
       <ToastContainer
