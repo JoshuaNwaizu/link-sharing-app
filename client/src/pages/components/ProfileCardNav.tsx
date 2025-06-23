@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import Button from './Button';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store';
 import { useEffect } from 'react';
@@ -80,7 +80,7 @@ const ProfileCardNav = () => {
           />
         </div>
       </div>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-center"
         autoClose={5000}
         hideProgressBar={true}
@@ -91,7 +91,7 @@ const ProfileCardNav = () => {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
     </nav>
   );
 };

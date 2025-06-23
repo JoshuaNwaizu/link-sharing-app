@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
 import Loader from './components/Loader';
 import { motion } from 'framer-motion';
+import { setToast } from '../utils/toastSlice';
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -81,10 +82,10 @@ const Login = () => {
           },
         }),
       ).unwrap();
-      if (response.token) {
-        toast.success('Login successful!');
-        console.log('Token stored in localStorage');
+      if (response) {
+        dispatch(setToast({ message: 'Login successful!', type: 'success' }));
       }
+      console.log('thiss is the response', response);
       navigate('/');
     } catch (err: any) {
       toast.error('Email or password is incorrect');
@@ -163,12 +164,6 @@ const Login = () => {
             <p className="cursor-pointer text-[#633CFF]">Create account</p>
           </Link>
         </div>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={true}
-          theme="light"
-        />
       </motion.div>
     </>
   );

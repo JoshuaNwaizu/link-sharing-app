@@ -5,11 +5,12 @@ import { AppDispatch, RootState } from '../store';
 import { fetchData } from '../utils/dataSlice';
 import { API } from '../App';
 import Button from './components/Button';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import Loader from './components/Loader';
 import { motion } from 'framer-motion';
+import { setToast } from '../utils/toastSlice';
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -102,7 +103,12 @@ const Signup = () => {
       ).unwrap();
 
       if (response.status === 'success') {
-        toast.success('Account created successfully!');
+        dispatch(
+          setToast({
+            message: 'Account created successfully!',
+            type: 'success',
+          }),
+        );
         navigate('/auth/login');
       } else {
         throw new Error(response.message || 'Failed to create account');
@@ -206,7 +212,7 @@ const Signup = () => {
           </Link>
         </div>
       </motion.div>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-center"
         autoClose={5000}
         hideProgressBar={true}
@@ -217,7 +223,7 @@ const Signup = () => {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
     </>
   );
 };

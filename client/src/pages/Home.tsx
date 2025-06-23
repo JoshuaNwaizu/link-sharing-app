@@ -5,7 +5,7 @@ import LinkCard from './components/LinkCard';
 import { AppDispatch, RootState } from '../store';
 import { fetchLinks, saveLinks } from '../utils/linkSlice';
 import { useNavigate } from 'react-router';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import Loader from './components/Loader';
 import {
@@ -16,6 +16,7 @@ import {
 } from '@hello-pangea/dnd';
 import { AnimatePresence } from 'framer-motion';
 import { API } from '../App';
+import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -34,30 +35,35 @@ const Home = () => {
     }));
     dispatch({ type: 'link/reorderLinks', payload: linksWithOrder });
   };
-  // const fetchUserLinks = useCallback(async () => {
-  //   try {
-  //     await dispatch(fetchLinks()).unwrap();
-  //   } catch (error: any) {
-  //     console.error('Failed to fetch links:', error);
-  //     if (
-  //       error?.status === 401 ||
-  //       error?.response?.status === 401 ||
-  //       error?.message?.toLowerCase().includes('unauthorized')
-  //     ) {
-  //       navigate('/auth/signup');
-  //     } else {
-  //       console.error('Failed to fetch links:', error);
-  //     }
-  //   }
-  // }, [dispatch, navigate]);
 
-  // useEffect(() => {
-  //   const controller = new AbortController();
-  //   fetchUserLinks();
-  //   return () => controller.abort();
-  // }, [fetchUserLinks]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authRes = await fetch(`${API}/checkAuth`, {
+        credentials: 'include',
+      });
+
+      // If fetch succeeded but user is not authenticated
+      if (!authRes.ok) {
+        // Only redirect if backend says unauthorized (401 or 403)
+        if (authRes.status === 401 || authRes.status === 403) {
+          navigate('/auth/login');
+        }
+        // For other errors (like 500), you might want to show an error message instead
+        return;
+      }
+    };
+    checkAuth();
+  }, [dispatch, navigate]);
+  const areLinksValid = (links: { url: string }[]) => {
+    // Checks if every link has a non-empty url (after trimming)
+    return links.every((link) => link.url && link.url.trim() !== '');
+  };
 
   const handleSave = async () => {
+    if (!areLinksValid(links)) {
+      toast.error("Link can't be empty");
+      return;
+    }
     try {
       // 🔒 Check if user is authenticated
       const authRes = await fetch(`${API}/checkAuth`, {
@@ -160,11 +166,11 @@ const Home = () => {
             />
           </div>
         </div>
-        <ToastContainer
+        {/* <ToastContainer
           position="top-center"
           autoClose={3000}
           hideProgressBar={true}
-        />
+        /> */}
       </div>
     </>
   );

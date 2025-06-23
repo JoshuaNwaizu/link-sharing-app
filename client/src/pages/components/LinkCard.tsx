@@ -139,8 +139,8 @@ const LinkCard = ({
 
     const fullUrl = `${prefix}${editablePart}`;
 
-    if (!editablePart) {
-      setError("Can't be empty");
+    if (!editablePart.trim()) {
+      setError("Link can't be empty");
     } else if (!isValidUrl(fullUrl, platformTitle)) {
       setError('Please check the URL');
     } else {
@@ -271,10 +271,7 @@ const LinkCard = ({
                 alt="link"
                 className="w-[1rem]"
               />
-              <span className="flex w-full overflow-x-auto bg-red-200 items-center">
-                {/* <span className="text-[#737373]  select-none">
-                  {platformPrefixes[platformTitle]}
-                </span> */}
+              <div className="flex w-full items-center">
                 <input
                   type="text"
                   inputMode="url"
@@ -285,9 +282,10 @@ const LinkCard = ({
                   onClick={handleProtectCursor}
                   onKeyDown={handleProtectCursor}
                 />
-              </span>
+              </div>
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            <p className="text-red-500 text-sm">{error}</p>
           </div>
         </div>
       </motion.div>

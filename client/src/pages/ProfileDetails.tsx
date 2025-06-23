@@ -10,7 +10,7 @@ import {
   setProfileData,
 } from '../utils/profileSlice';
 // import { Profile } from '../utils/cleanUrl';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Loader from './components/Loader';
 import { NavigateFunction, useNavigate } from 'react-router';
 import { API } from '../App';
@@ -28,26 +28,6 @@ const ProfileDetails = () => {
   const isFormValid = () => {
     return Boolean(firstName?.trim() || lastName?.trim() || email?.trim());
   };
-
-  // useEffect(() => {
-  //   dispatch(fetchProfile())
-  //     .unwrap()
-  //     .then((profile: Profile | null) => {
-  //       if (profile) {
-  //         dispatch(
-  //           setProfileData({
-  //             firstName: profile.firstName,
-  //             lastName: profile.lastName,
-  //             email: profile.email,
-  //             imageUrl: profile.image?.url || null,
-  //             isEmailDisabled,
-  //           }),
-  //         );
-  //         setPreview(profile.image?.url || null);
-  //       }
-  //     })
-  //     .catch((error) => console.error('Failed to fetch profile:', error));
-  // }, [dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -159,7 +139,6 @@ const ProfileDetails = () => {
           </div>
         </div>
       </section>
-      <ToastContainer position="top-center" />
     </>
   );
 };

@@ -2,6 +2,8 @@ import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import dataReducer from './utils/dataSlice';
 import linkReducer from './utils/linkSlice';
 import ProfileReducer from './utils/profileSlice';
+import toastReducer from './utils/toastSlice';
+
 import { useDispatch } from 'react-redux';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -25,6 +27,7 @@ export const store = configureStore({
     data: dataReducer,
     link: linkReducer,
     profile: ProfileReducer,
+    toast: toastReducer,
   },
   preloadedState: persistedState,
 });
