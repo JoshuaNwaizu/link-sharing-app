@@ -22,6 +22,10 @@ const ProfileDetails = () => {
   const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
     useSelector((state: RootState) => state.profile);
   const userData = useSelector((state: RootState) => state.data.data);
+  const [errors, setErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+  }>({});
 
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -53,8 +57,76 @@ const ProfileDetails = () => {
     }
   };
 
+  //   event.preventDefault();
+  //   const newErrors: { firstName?: string; lastName?: string } = {};
+  //   if (!firstName?.trim())
+  //     newErrors.firstName = 'First name needs to be filled';
+  //   toast.error('First name needs to be field');
+  //   if (!lastName?.trim()) newErrors.lastName = 'Last name needs to be filled';
+
+  //   setErrors(newErrors);
+
+  //   // If there are errors, do not proceed
+  //   if (Object.keys(newErrors).length > 0) return;
+
+  //   const formDataToSend = new FormData();
+  //   if (firstName) formDataToSend.append('firstName', firstName);
+  //   if (lastName) formDataToSend.append('lastName', lastName);
+  //   if (email) formDataToSend.append('email', email);
+  //   if (fileInputRef.current?.files?.[0]) {
+  //     formDataToSend.append('image', fileInputRef.current.files[0]);
+  //   }
+  //   await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
+  //   try {
+  //     const authRes = await fetch(`${API}/checkAuth`, {
+  //       credentials: 'include',
+  //     });
+
+  //     if (!authRes.ok) {
+  //       navigate('/auth/signup');
+  //       return;
+  //     }
+  //     // await dispatch(updateProfile(formDataToSend)).unwrap();
+  //     await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
+  //     toast.success('Profile updated successfully!', {
+  //       autoClose: 3000,
+  //       hideProgressBar: true,
+  //     });
+  //     await dispatch(fetchProfile());
+  //   } catch (error: any) {
+  //     if (
+  //       error?.status === 401 ||
+  //       error?.response?.status === 401 ||
+  //       (typeof error?.message === 'string' &&
+  //         error.message.toLowerCase().includes('unauthorized'))
+  //     ) {
+  //       // Redirect to signup
+  //       navigate('/auth/signup');
+  //       return;
+  //     }
+  //     console.error('Error saving profile:', error);
+  //     toast.error('Failed to update profile. Please try again.', {
+  //       autoClose: 3000,
+  //       hideProgressBar: true,
+  //     });
+  //   }
+  // };
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    const newErrors: { firstName?: string; lastName?: string } = {};
+
+    if (!firstName?.trim()) {
+      newErrors.firstName = 'This field is required!';
+    }
+
+    if (!lastName?.trim()) {
+      newErrors.lastName = 'This field is required!';
+    }
+
+    setErrors(newErrors);
+
+    // If there are errors, do not proceed
+    if (Object.keys(newErrors).length > 0) return;
 
     const formDataToSend = new FormData();
     if (firstName) formDataToSend.append('firstName', firstName);
@@ -63,7 +135,7 @@ const ProfileDetails = () => {
     if (fileInputRef.current?.files?.[0]) {
       formDataToSend.append('image', fileInputRef.current.files[0]);
     }
-    await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
+
     try {
       const authRes = await fetch(`${API}/checkAuth`, {
         credentials: 'include',
@@ -73,7 +145,7 @@ const ProfileDetails = () => {
         navigate('/auth/signup');
         return;
       }
-      // await dispatch(updateProfile(formDataToSend)).unwrap();
+
       await dispatch(saveOrUpdateProfile(formDataToSend)).unwrap();
       toast.success('Profile updated successfully!', {
         autoClose: 3000,
@@ -87,7 +159,6 @@ const ProfileDetails = () => {
         (typeof error?.message === 'string' &&
           error.message.toLowerCase().includes('unauthorized'))
       ) {
-        // Redirect to signup
         navigate('/auth/signup');
         return;
       }
@@ -122,6 +193,7 @@ const ProfileDetails = () => {
           formData={{ firstName, lastName, email, isEmailDisabled }}
           onInputChange={handleInputChange}
           userEmail={userData?.email}
+          error={errors}
         />
 
         <div className="mt-auto pt-4 w-full">

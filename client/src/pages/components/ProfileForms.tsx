@@ -12,10 +12,12 @@ interface ProfileFormsProps {
   };
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   userEmail?: string;
+  error?: { firstName?: string; lastName?: string };
 }
 const ProfileForms: React.FC<ProfileFormsProps> = ({
   formData,
   onInputChange,
+  error,
 }) => {
   const dispatch = useAppDispatch();
   const userData = useSelector((state: RootState) => state.data.data);
@@ -46,17 +48,22 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
         >
           First Name *
         </label>
-        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] items-center px-[1rem]">
-          <input
-            type="text"
-            className="border-none outline-none xl:w-[27rem]"
-            placeholder="e.g John"
-            name="firstName"
-            id="first-name"
-            value={formData.firstName}
-            onChange={onInputChange}
-            required
-          />
+        <div>
+          <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] border-[#D9D9D9] items-center px-[1rem]">
+            <input
+              type="text"
+              className="border-none outline-none xl:w-[27rem]"
+              placeholder="e.g John"
+              name="firstName"
+              id="first-name"
+              value={formData.firstName}
+              onChange={onInputChange}
+              required
+            />
+          </div>
+          {error?.firstName && (
+            <p className="text-red-500 text-[.7rem] mt-1">{error.firstName}</p>
+          )}
         </div>
       </div>
       <div className="xl:flex xl:items-center  xl:justify-between">
@@ -66,17 +73,22 @@ const ProfileForms: React.FC<ProfileFormsProps> = ({
         >
           Last Name *
         </label>
-        <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] px-[1rem]">
-          <input
-            type="text"
-            className="border-none outline-none xl:w-[27rem]"
-            placeholder="e.g Appleased"
-            name="lastName"
-            id="last-name"
-            value={formData.lastName}
-            onChange={onInputChange}
-            required
-          />
+        <div>
+          <div className="flex gap-2  py-[.75rem] border rounded-[.5rem] border-[#D9D9D9] items-center transition-all duration-250 focus-within:border-[#633CFF] focus-within:shadow-[0_0_32px_0_rgba(99,60,255,0.25)] px-[1rem]">
+            <input
+              type="text"
+              className="border-none outline-none xl:w-[27rem]"
+              placeholder="e.g Appleased"
+              name="lastName"
+              id="last-name"
+              value={formData.lastName}
+              onChange={onInputChange}
+              required
+            />
+          </div>
+          {error?.lastName && (
+            <p className="text-red-500 text-[.7rem] mt-1">{error.lastName}</p>
+          )}
         </div>
       </div>
       <div className="xl:flex xl:items-center  xl:justify-between">

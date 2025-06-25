@@ -6,6 +6,7 @@ import { fetchLinks } from '../../utils/linkSlice';
 import { fetchProfile } from '../../utils/profileSlice';
 import { motion } from 'framer-motion';
 import { selectUserEmail } from '../../utils/dataSlice';
+import PhoneLinkSkeleton from './PhoneLinkSkeleton';
 
 export const platformColors = {
   github: '#1A1A1A',
@@ -88,7 +89,7 @@ const PhoneLink = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          Loading...
+          <PhoneLinkSkeleton />
         </motion.div>
       </div>
     );
