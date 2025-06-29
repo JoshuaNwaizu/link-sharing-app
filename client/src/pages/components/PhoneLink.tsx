@@ -158,14 +158,6 @@ const PhoneLink = () => {
               strokeWidth="4"
               fill="none"
             />
-            {/* <image
-              href={imageUrl}
-              x="105.5"
-              y="64"
-              width="96"
-              height="96"
-              clipPath="circle(48px at center)"
-            /> */}
             <image
               href={imageUrl}
               x="105.5"
