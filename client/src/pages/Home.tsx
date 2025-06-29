@@ -16,7 +16,7 @@ import {
 } from '@hello-pangea/dnd';
 import { AnimatePresence } from 'framer-motion';
 import { API } from '../App';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,24 +36,24 @@ const Home = () => {
     dispatch({ type: 'link/reorderLinks', payload: linksWithOrder });
   };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authRes = await fetch(`${API}/checkAuth`, {
-        credentials: 'include',
-      });
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     const authRes = await fetch(`${API}/checkAuth`, {
+  //       credentials: 'include',
+  //     });
 
-      // If fetch succeeded but user is not authenticated
-      if (!authRes.ok) {
-        // Only redirect if backend says unauthorized (401 or 403)
-        if (authRes.status === 401 || authRes.status === 403) {
-          navigate('/auth/login');
-        }
-        // For other errors (like 500), you might want to show an error message instead
-        return;
-      }
-    };
-    checkAuth();
-  }, [dispatch, navigate]);
+  //     // If fetch succeeded but user is not authenticated
+  //     if (!authRes.ok) {
+  //       // Only redirect if backend says unauthorized (401 or 403)
+  //       if (authRes.status === 401 || authRes.status === 403) {
+  //         navigate('/auth/login');
+  //       }
+  //       // For other errors (like 500), you might want to show an error message instead
+  //       return;
+  //     }
+  //   };
+  //   checkAuth();
+  // }, [dispatch, navigate]);
   const areLinksValid = (links: { url: string }[]) => {
     // Checks if every link has a non-empty url (after trimming)
     return links.every((link) => link.url && link.url.trim() !== '');

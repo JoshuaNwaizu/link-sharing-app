@@ -114,7 +114,14 @@ const ProfileDetails = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newErrors: { firstName?: string; lastName?: string } = {};
+    const authRes = await fetch(`${API}/checkAuth`, {
+      credentials: 'include',
+    });
 
+    if (!authRes.ok) {
+      navigate('/auth/login');
+      return;
+    }
     if (!firstName?.trim()) {
       newErrors.firstName = 'This field is required!';
     }
