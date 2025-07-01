@@ -4,7 +4,7 @@ import Hero from './components/Hero';
 import LinkCard from './components/LinkCard';
 import { AppDispatch, RootState } from '../store';
 import { fetchLinks, saveLinks } from '../utils/linkSlice';
-import { useNavigate } from 'react-router';
+
 import { toast } from 'react-toastify';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import Loader from './components/Loader';
@@ -22,7 +22,6 @@ import { useLoginModal } from './contexts/LoginModalContext';
 // import { useEffect } from 'react';
 
 const Home = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isOpen, openModal, closeModal } = useLoginModal();
   const { links, status } = useSelector((state: RootState) => state.link);
@@ -45,25 +44,28 @@ const Home = () => {
       const authRes = await fetch(`${API}/checkAuth`, {
         credentials: 'include',
       });
+      const data = await authRes.json().catch(() => ({}));
+      console.log(
+        'authRes.ok:',
+        authRes.ok,
+        'status:',
+        authRes.status,
+        'body:',
+        data,
+      );
 
       // If fetch succeeded but user is not authenticated
       if (!authRes.ok && authRes.status === 401) {
         openModal();
         return;
+      } else if (authRes.ok && authRes.status === 200) {
+        closeModal();
       }
     };
     checkAuth();
-  }, [dispatch, navigate]);
-  // const areLinksValid = (links: { url: string }[]) => {
-  //   // Checks if every link has a non-empty url (after trimming)
-  //   return links.every((link) => link.url && link.url.trim() !== '');
-  // };
+  }, [dispatch]);
 
   const handleSave = async () => {
-    // if (!areLinksValid(links)) {
-    //   toast.error("Link can't be empty");
-    //   return;
-    // }
     try {
       const authRes = await fetch(`${API}/checkAuth`, {
         credentials: 'include',
