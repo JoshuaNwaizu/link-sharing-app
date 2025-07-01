@@ -16,11 +16,15 @@ import {
 } from '@hello-pangea/dnd';
 import { AnimatePresence } from 'framer-motion';
 import { API } from '../App';
+import { useEffect } from 'react';
+import LoginRequiredModal from './components/LoginRequiredModal';
+import { useLoginModal } from './contexts/LoginModalContext';
 // import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { isOpen, openModal, closeModal } = useLoginModal();
   const { links, status } = useSelector((state: RootState) => state.link);
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -36,41 +40,38 @@ const Home = () => {
     dispatch({ type: 'link/reorderLinks', payload: linksWithOrder });
   };
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     const authRes = await fetch(`${API}/checkAuth`, {
-  //       credentials: 'include',
-  //     });
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authRes = await fetch(`${API}/checkAuth`, {
+        credentials: 'include',
+      });
 
-  //     // If fetch succeeded but user is not authenticated
-  //     if (!authRes.ok) {
-  //       // Only redirect if backend says unauthorized (401 or 403)
-  //       if (authRes.status === 401 || authRes.status === 403) {
-  //         navigate('/auth/login');
-  //       }
-  //       // For other errors (like 500), you might want to show an error message instead
-  //       return;
-  //     }
-  //   };
-  //   checkAuth();
-  // }, [dispatch, navigate]);
-  const areLinksValid = (links: { url: string }[]) => {
-    // Checks if every link has a non-empty url (after trimming)
-    return links.every((link) => link.url && link.url.trim() !== '');
-  };
+      // If fetch succeeded but user is not authenticated
+      if (!authRes.ok && authRes.status === 401) {
+        openModal();
+        return;
+      }
+    };
+    checkAuth();
+  }, [dispatch, navigate]);
+  // const areLinksValid = (links: { url: string }[]) => {
+  //   // Checks if every link has a non-empty url (after trimming)
+  //   return links.every((link) => link.url && link.url.trim() !== '');
+  // };
 
   const handleSave = async () => {
-    if (!areLinksValid(links)) {
-      toast.error("Link can't be empty");
-      return;
-    }
+    // if (!areLinksValid(links)) {
+    //   toast.error("Link can't be empty");
+    //   return;
+    // }
     try {
       const authRes = await fetch(`${API}/checkAuth`, {
         credentials: 'include',
       });
 
       if (!authRes.ok) {
-        navigate('/auth/login');
+        openModal();
+        // navigate('/auth/login');
         return;
       }
       await dispatch(saveLinks()).unwrap();
@@ -90,6 +91,10 @@ const Home = () => {
   return (
     <>
       {status === 'loading' && <Loader />}
+      <LoginRequiredModal
+        open={isOpen}
+        onClose={closeModal}
+      />
       <div className="mt-[8rem] xl:mt-0 lg:h-[52.125rem] p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] xl:w-[50.5rem] w-full">
         <Hero />
         <DragDropContext onDragEnd={onDragEnd}>
@@ -164,11 +169,6 @@ const Home = () => {
             />
           </div>
         </div>
-        {/* <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={true}
-        /> */}
       </div>
     </>
   );

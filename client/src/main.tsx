@@ -4,11 +4,14 @@ import { Provider } from 'react-redux';
 import './index.css';
 import App from './App.tsx';
 import { store } from './store.ts';
+import { LoginModalProvider } from './pages/contexts/LoginModalContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <LoginModalProvider>
+        <App />
+      </LoginModalProvider>
     </Provider>
   </StrictMode>,
 );

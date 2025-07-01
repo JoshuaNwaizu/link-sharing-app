@@ -11,7 +11,7 @@ const Nav = () => {
       method: 'GET', // or 'POST' if you change it to a POST route
       credentials: 'include',
     });
-
+    localStorage.removeItem('userData');
     toast.success('Logged out successfully');
     navigate('/auth/login'); // Redirect to login page
   };

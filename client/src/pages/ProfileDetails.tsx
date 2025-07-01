@@ -14,10 +14,13 @@ import { toast } from 'react-toastify';
 import Loader from './components/Loader';
 import { NavigateFunction, useNavigate } from 'react-router';
 import { API } from '../App';
+import { useLoginModal } from './contexts/LoginModalContext';
+import LoginRequiredModal from './components/LoginRequiredModal';
 
 const ProfileDetails = () => {
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useAppDispatch();
+  const { isOpen, openModal, closeModal } = useLoginModal();
 
   const { firstName, lastName, email, imageUrl, loading, isEmailDisabled } =
     useSelector((state: RootState) => state.profile);
@@ -119,7 +122,8 @@ const ProfileDetails = () => {
     });
 
     if (!authRes.ok) {
-      navigate('/auth/login');
+      openModal();
+
       return;
     }
     if (!firstName?.trim()) {
@@ -180,6 +184,10 @@ const ProfileDetails = () => {
   return (
     <>
       {loading && <Loader />}
+      <LoginRequiredModal
+        open={isOpen}
+        onClose={closeModal}
+      />
       <section className="mt-[8rem] relative p-[1.5rem] flex flex-col gap-7 rounded-[1rem] bg-white md:w-[40.0625rem] lg:h-[52.125rem] xl:mt-0 xl:w-[50.5rem] w-full">
         <div className="flex flex-col gap-3">
           <h1 className="text-[1.5rem] font-bold leading-[2.25rem]">
