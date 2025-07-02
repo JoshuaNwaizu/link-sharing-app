@@ -46,17 +46,17 @@ const platformPrefixes: { [key: string]: string } = {
   codewars: 'https://www.codewars.com/users/',
 };
 
-// const isValidUrl = (url: string, platform: string): boolean => {
-//   const prefix = platformPrefixes[platform];
-//   if (!url.startsWith(prefix)) return false;
+const isValidUrl = (url: string, platform: string): boolean => {
+  const prefix = platformPrefixes[platform];
+  if (!url.startsWith(prefix)) return false;
 
-//   try {
-//     new URL(url);
-//     return true;
-//   } catch {
-//     return false;
-//   }
-// };
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const LinkCard = ({
   id,
@@ -98,7 +98,7 @@ const LinkCard = ({
 
     const prefix = platformPrefixes[item] || '';
     setUserInput('');
-    // Remove this: dispatch(setPlatform(item));
+
     dispatch(updateLinkPlatform({ id, platform: item })); // Use id, not index!
     dispatch(toggleOptionTitle(id));
     dispatch(
@@ -139,13 +139,13 @@ const LinkCard = ({
 
     const fullUrl = `${prefix}${editablePart}`;
 
-    // if (!editablePart.trim()) {
-    //   setError("Link can't be emptyyyyy");
-    // } else if (!isValidUrl(fullUrl, platformTitle)) {
-    //   setError('Please check the URL');
-    // } else {
-    //   setError('');
-    // }
+    if (!editablePart.trim()) {
+      setError("Link can't be emptyyyyy");
+    } else if (!isValidUrl(fullUrl, platformTitle)) {
+      setError('Please check the URL');
+    } else {
+      setError('');
+    }
 
     dispatch(
       updateLink({

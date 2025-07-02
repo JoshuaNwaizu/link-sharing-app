@@ -55,15 +55,14 @@ const Home = () => {
       );
 
       // If fetch succeeded but user is not authenticated
-      if (!authRes.ok && authRes.status === 401) {
+      if (!authRes.ok || authRes.status === 401) {
         openModal();
-        return;
-      } else if (authRes.ok && authRes.status === 200) {
+      } else {
         closeModal();
       }
     };
     checkAuth();
-  }, [dispatch]);
+  }, []);
 
   const handleSave = async () => {
     try {
