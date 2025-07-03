@@ -36,7 +36,10 @@ const LoginRequiredModal: React.FC<Props> = ({ open, onClose }) => {
                 Cancel
               </button>
               <Link to={'/auth/login'}>
-                <button className="px-4 py-2 rounded bg-[#633CFF] text-white hover:bg-[#4b2fd6]">
+                <button
+                  className="px-4 py-2 rounded bg-[#633CFF] text-white hover:bg-[#4b2fd6]"
+                  onClick={onClose}
+                >
                   Log in
                 </button>
               </Link>

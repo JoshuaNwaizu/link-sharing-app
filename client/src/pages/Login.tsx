@@ -77,6 +77,7 @@ const Login = () => {
           url: `${API}/login`,
           method: 'POST',
           body: JSON.stringify({ email, password }),
+          credentials: 'include', // ✅ REQUIRED
           headers: {
             'Content-Type': 'application/json',
           },

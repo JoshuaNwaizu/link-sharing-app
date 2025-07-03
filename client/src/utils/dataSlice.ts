@@ -16,6 +16,7 @@ interface FetchDataParams {
   method: string;
   body?: string;
   headers?: Record<string, string>;
+  credentials?: 'include' | 'omit' | 'same-origin';
 }
 
 const getInitialState = (): DataState => {
